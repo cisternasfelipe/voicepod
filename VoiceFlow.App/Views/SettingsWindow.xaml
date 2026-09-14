@@ -33,7 +33,8 @@
             <Setter Property="Margin" Value="0,2" />
             <Setter Property="Padding" Value="14,10" />
             <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="Focusable" Value="False" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnTabItemPreviewMouseLeftButtonDown" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TabItem">
@@ -126,12 +127,14 @@
                             WindowChrome.IsHitTestVisibleInChrome="True">
                     <Button Style="{StaticResource WindowControlButton}"
                             Click="OnMinimizeClick"
-                            ToolTip="Minimizar">
+                            ToolTip="Minimizar"
+                            WindowChrome.IsHitTestVisibleInChrome="True">
                         <iconPacks:PackIconLucide Kind="Minus" Width="11" Height="11" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Button>
                     <Button Style="{StaticResource WindowCloseButton}"
                             Click="OnCloseClick"
-                            ToolTip="{x:Static res:Strings.Close}">
+                            ToolTip="{x:Static res:Strings.Close}"
+                            WindowChrome.IsHitTestVisibleInChrome="True">
                         <iconPacks:PackIconLucide Kind="X" Width="11" Height="11" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Button>
                 </StackPanel>
@@ -177,7 +180,7 @@
 
                                 <!-- Right Content Area -->
                                 <Border Grid.Column="1" Background="{StaticResource BackgroundBrush}" Padding="24,18">
-                                    <ContentPresenter ContentSource="SelectedContent" />
+                                    <ContentPresenter x:Name="PART_SelectedContentHost" ContentSource="SelectedContent" />
                                 </Border>
                             </Grid>
                         </ControlTemplate>

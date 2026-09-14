@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Controls;
 using VoiceFlow.App.Resources;
 using VoiceFlow.App.Services;
 using VoiceFlow.App.ViewModels;
@@ -81,6 +82,14 @@ public partial class SettingsWindow : Window
         }
     }
 
+    private void OnTabItemPreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    {
+        if (sender is TabItem tabItem)
+        {
+            tabItem.IsSelected = true;
+        }
+    }
+
     private void StartRecordingSlot(HotkeyTargetSlot slot)
     {
         StopRecordingHotkey();
@@ -93,7 +102,7 @@ public partial class SettingsWindow : Window
         status.Visibility = Visibility.Visible;
         status.Text = Strings.SettingsHotkeyListening;
         btn.Content = Strings.Cancel;
-        box.Text = "...";
+        box.SetCurrentValue(System.Windows.Controls.TextBox.TextProperty, "...");
 
         _captureSession = new HotkeyCaptureSession();
         _captureSession.HotkeyCaptured += (_, hotkey) => Dispatcher.BeginInvoke(() =>
@@ -115,7 +124,7 @@ public partial class SettingsWindow : Window
             {
                 if (!string.IsNullOrWhiteSpace(preview.DisplayText))
                 {
-                    box.Text = preview.DisplayText;
+                    box.SetCurrentValue(System.Windows.Controls.TextBox.TextProperty, preview.DisplayText);
                 }
                 status.Text = preview.HintText;
             }
@@ -138,8 +147,8 @@ public partial class SettingsWindow : Window
             RecordHoldHotkeyButton.Content = Strings.SettingsHotkeyRecord;
             RecordToggleHotkeyButton.Content = Strings.SettingsHotkeyRecord;
 
-            HoldHotkeyBox.Text = _viewModel.HoldHotkeyText;
-            ToggleHotkeyBox.Text = _viewModel.ToggleHotkeyText;
+            HoldHotkeyBox.SetCurrentValue(System.Windows.Controls.TextBox.TextProperty, _viewModel.HoldHotkeyText);
+            ToggleHotkeyBox.SetCurrentValue(System.Windows.Controls.TextBox.TextProperty, _viewModel.ToggleHotkeyText);
 
             _recordingSlot = HotkeyTargetSlot.None;
         }
