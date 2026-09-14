@@ -109,6 +109,17 @@ public sealed class JsonSettingsService : ISettingsService
         {
             settings.Profiles = BuiltInProfiles.CreateSeed();
         }
+        else
+        {
+            foreach (var profile in settings.Profiles)
+            {
+                if (profile.BuiltInKey == BuiltInProfiles.CleanupKey
+                    && (string.IsNullOrWhiteSpace(profile.SystemPrompt) || profile.SystemPrompt.StartsWith("Eres un corrector de dictados")))
+                {
+                    profile.SystemPrompt = BuiltInProfiles.CleanupPrompt;
+                }
+            }
+        }
 
         if (settings.Profiles.All(p => p.Id != settings.ActiveProfileId))
         {

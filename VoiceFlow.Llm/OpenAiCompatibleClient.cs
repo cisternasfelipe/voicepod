@@ -98,7 +98,7 @@ public sealed class OpenAiCompatibleClient : ILlmClient
 
             var parsed = JsonSerializer.Deserialize<ChatCompletionResponse>(body, JsonOptions);
             var rawText = parsed?.Choices?.FirstOrDefault()?.Message?.Content;
-            var text = CleanReasoningTags(rawText ?? string.Empty);
+            var text = CleanLlmOutput(rawText ?? string.Empty);
 
             if (string.IsNullOrWhiteSpace(text))
             {
@@ -463,6 +463,43 @@ public sealed class OpenAiCompatibleClient : ILlmClient
         }
 
         return body.Length > 300 ? body[..300] : body;
+    }
+
+    internal static string CleanLlmOutput(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return text;
+        }
+
+        // 1. Strip <think>...</think> and <thought>...</thought> tags and their contents
+        var cleaned = CleanReasoningTags(text);
+
+        // 2. Strip leading conversational preambles (e.g. "Aquí está la transcripción:", "Texto corregido:")
+        cleaned = System.Text.RegularExpressions.Regex.Replace(
+            cleaned,
+            @"^(?:Aquí\s+(?:está|tienes)|Transcripción\s+(?:corregida|limpia)|Texto\s+corregido|Resultado)[\s\S]*?:\s*",
+            string.Empty,
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+        // 3. Strip trailing conversational notes, lists of corrections, and disclaimers
+        cleaned = System.Text.RegularExpressions.Regex.Replace(
+            cleaned,
+            @"\n+\s*(?:\*{1,3}Notas?(?:\s+sobre\s+las\s+correcciones)?:\*{1,3}|Notas?:|Explicación:|Si el contexto es distinto|Cualquier duda|Espero que)[\s\S]*$",
+            string.Empty,
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+        cleaned = cleaned.Trim();
+
+        // 4. Strip surrounding quotes if the model wrapped the entire output in quotes
+        if ((cleaned.StartsWith('"') && cleaned.EndsWith('"') && cleaned.Length >= 2)
+            || (cleaned.StartsWith('«') && cleaned.EndsWith('»') && cleaned.Length >= 2)
+            || (cleaned.StartsWith('“') && cleaned.EndsWith('”') && cleaned.Length >= 2))
+        {
+            cleaned = cleaned[1..^1].Trim();
+        }
+
+        return cleaned;
     }
 
     internal static string CleanReasoningTags(string text)

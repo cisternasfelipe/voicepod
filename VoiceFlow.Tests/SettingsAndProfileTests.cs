@@ -110,4 +110,19 @@ public class LlmReasoningTests
         Assert.False(settings.EnableReasoning);
         Assert.Equal("low", settings.ReasoningEffort);
     }
+
+    [Fact]
+    public void CleanLlmOutput_RemovesConversationalPreamblesNotesAndQuotes()
+    {
+        var input = "Aquí está la transcripción corregida y con puntuación:\n\n" +
+                    "\"La primera pantalla que vamos a empezar a modificar es esta pantalla que no está minimizada.\"\n\n" +
+                    "**Notas sobre las correcciones:**\n" +
+                    "- \"modifica esta batalla\" → \"modificar es esta pantalla\"\n" +
+                    "- \"agramos\" → \"agregarle\"\n\n" +
+                    "Si el contexto es distinto, avísame y ajusto la transcripción.";
+
+        var cleaned = VoiceFlow.Llm.OpenAiCompatibleClient.CleanLlmOutput(input);
+
+        Assert.Equal("La primera pantalla que vamos a empezar a modificar es esta pantalla que no está minimizada.", cleaned);
+    }
 }
