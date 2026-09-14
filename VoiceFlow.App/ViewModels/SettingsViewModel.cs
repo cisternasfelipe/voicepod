@@ -54,6 +54,7 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
     [ObservableProperty] private int _numThreads;
     [ObservableProperty] private SttProvider _provider;
     [ObservableProperty] private string _modelStatus = string.Empty;
+    [ObservableProperty] private CloudSttModelInfo? _selectedCloudModel;
 
     // AI
     [ObservableProperty] private string _baseUrl = string.Empty;
@@ -67,6 +68,51 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
     [ObservableProperty] private bool _isTestingConnection;
     [ObservableProperty] private bool _enableReasoning;
     [ObservableProperty] private string _reasoningEffort = "low";
+
+    partial void OnProviderChanged(SttProvider value)
+    {
+        OnPropertyChanged(nameof(SelectedSttProviderOption));
+        OnPropertyChanged(nameof(IsCloudStt));
+        OnPropertyChanged(nameof(IsLocalStt));
+        ApplyModelState(_transcription.State);
+    }
+
+    partial void OnSelectedCloudModelChanged(CloudSttModelInfo? value)
+    {
+        ApplyModelState(_transcription.State);
+    }
+
+    partial void OnApiKeyChanged(string value)
+    {
+        OnPropertyChanged(nameof(HasApiKeyForCloudStt));
+        ApplyModelState(_transcription.State);
+    }
+
+    public bool IsCloudStt => Provider == SttProvider.OpenRouterCloud;
+    public bool IsLocalStt => Provider != SttProvider.OpenRouterCloud;
+    public bool HasApiKeyForCloudStt => !string.IsNullOrWhiteSpace(ApiKey);
+
+    public IReadOnlyList<CloudSttModelInfo> CloudModels => CloudSttCatalog.Models;
+
+    public IReadOnlyList<SttProviderOption> SttProviderOptions { get; } =
+    [
+        new(SttProvider.OpenRouterCloud, "Nube OpenRouter (Recomendado)", "Rápido y preciso. Soporta MAI-Transcribe 2, Whisper, Voxtral, etc."),
+        new(SttProvider.Cpu, "Local (CPU)", "Sherpa-ONNX sin conexión a internet"),
+        new(SttProvider.DirectMl, "Local (GPU DirectML)", "Aceleración gráfica en Windows sin conexión"),
+        new(SttProvider.Cuda, "Local (NVIDIA CUDA)", "Aceleración NVIDIA dedicada sin conexión")
+    ];
+
+    public SttProviderOption? SelectedSttProviderOption
+    {
+        get => SttProviderOptions.FirstOrDefault(o => o.Value == Provider) ?? SttProviderOptions[0];
+        set
+        {
+            if (value is not null && Provider != value.Value)
+            {
+                Provider = value.Value;
+            }
+        }
+    }
 
     partial void OnTemperatureChanged(double value)
     {
@@ -290,6 +336,10 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
             : current.Stt.ModelDirectory!;
         NumThreads = current.Stt.NumThreads;
         Provider = current.Stt.Provider;
+        var cloudModelId = string.IsNullOrWhiteSpace(current.Stt.CloudModel)
+            ? CloudSttCatalog.DefaultModelId
+            : current.Stt.CloudModel;
+        SelectedCloudModel = CloudModels.FirstOrDefault(m => m.Id == cloudModelId) ?? CloudModels.First();
         ApplyModelState(_transcription.State);
 
         BaseUrl = current.Llm.BaseUrl;
@@ -690,7 +740,8 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
         var modelChanged =
             !PathsEqual(current.Stt.ModelDirectory, ModelDirectory)
             || current.Stt.NumThreads != NumThreads
-            || current.Stt.Provider != Provider;
+            || current.Stt.Provider != Provider
+            || current.Stt.CloudModel != (SelectedCloudModel?.Id ?? CloudSttCatalog.DefaultModelId);
 
         current.General.StartWithWindows = StartWithWindows;
         current.General.MinimizeToTrayOnClose = MinimizeToTrayOnClose;
@@ -706,6 +757,7 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
         current.Stt.ModelDirectory = PathsEqual(ModelDirectory, AppPaths.DefaultModelDirectory) ? null : ModelDirectory;
         current.Stt.NumThreads = NumThreads;
         current.Stt.Provider = Provider;
+        current.Stt.CloudModel = SelectedCloudModel?.Id ?? CloudSttCatalog.DefaultModelId;
 
         current.Llm.BaseUrl = BaseUrl.Trim();
         current.Llm.Model = Model.Trim();
@@ -748,6 +800,16 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
 
     private void ApplyModelState(SttModelState state)
     {
+        if (Provider == SttProvider.OpenRouterCloud)
+        {
+            var hasKey = !string.IsNullOrWhiteSpace(ApiKey);
+            var modelName = SelectedCloudModel?.DisplayName ?? (SelectedCloudModel?.Id ?? CloudSttCatalog.DefaultModelId);
+            ModelStatus = hasKey
+                ? $"Nube lista ({modelName})"
+                : "Falta configurar la clave API de OpenRouter en la pestaña IA";
+            return;
+        }
+
         var present = _downloader.IsModelPresent(ModelDirectory);
 
         ModelStatus = state.Status switch
@@ -784,3 +846,6 @@ public sealed record LanguageOption(UiLanguage Value, string Display);
 
 /// <summary>One entry of the AI provider combo.</summary>
 public sealed record LlmProviderOption(LlmProviderKind Kind, string Display);
+
+/// <summary>One entry of the STT engine provider combo.</summary>
+public sealed record SttProviderOption(SttProvider Value, string DisplayName, string Description);

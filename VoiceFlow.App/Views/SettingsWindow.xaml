@@ -146,42 +146,163 @@
             </TabItem>
 
             <!-- Transcription -->
+            <!-- Transcription -->
             <TabItem Header="{x:Static res:Strings.TabTranscription}">
-                <StackPanel Margin="16">
-                    <TextBlock Text="{x:Static res:Strings.SettingsModelFolder}" Style="{StaticResource SectionText}" />
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <TextBox Grid.Column="0" Text="{Binding ModelDirectory}" />
-                        <Button Grid.Column="1" Content="{x:Static res:Strings.Browse}" Margin="8,0,0,0" Command="{Binding BrowseModelDirectoryCommand}" />
-                    </Grid>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Margin="16">
+                        <!-- Mode / Provider selector -->
+                        <TextBlock Text="Motor de reconocimiento de voz" Style="{StaticResource SectionText}" />
+                        <ComboBox HorizontalAlignment="Left"
+                                  Width="420"
+                                  ItemsSource="{Binding SttProviderOptions}"
+                                  SelectedItem="{Binding SelectedSttProviderOption}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="2,4">
+                                        <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}" />
+                                        <TextBlock Text="{Binding Description}" Style="{StaticResource MutedText}" FontSize="11" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
 
-                    <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
-                        <TextBlock Text="{x:Static res:Strings.SettingsThreads}" Style="{StaticResource BodyText}" VerticalAlignment="Center" />
-                        <TextBox Width="60" Margin="8,0,16,0" Text="{Binding NumThreads}" />
-                        <TextBlock Text="{x:Static res:Strings.SettingsProvider}" Style="{StaticResource BodyText}" VerticalAlignment="Center" />
-                        <ComboBox Width="140"
-                                  Margin="8,0,0,0"
-                                  ItemsSource="{Binding Providers}"
-                                  SelectedItem="{Binding Provider}" />
-                    </StackPanel>
+                        <!-- Cloud STT Section -->
+                        <Border Style="{StaticResource Card}"
+                                Margin="0,16,0,0"
+                                Visibility="{Binding IsCloudStt, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <StackPanel>
+                                <TextBlock Text="Modelo en la Nube (OpenRouter STT)" Style="{StaticResource SectionText}" />
+                                <TextBlock Text="Elige el modelo en la nube para procesar tu voz en tiempo récord y con máxima precisión." Style="{StaticResource MutedText}" Margin="0,0,0,10" />
 
-                    <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
-                        <TextBlock Text="{x:Static res:Strings.SettingsStatus}" Style="{StaticResource BodyText}" VerticalAlignment="Center" />
-                        <TextBlock Text="{Binding ModelStatus}"
-                                   Style="{StaticResource BodyText}"
-                                   FontWeight="SemiBold"
-                                   Margin="8,0,0,0"
-                                   VerticalAlignment="Center" />
-                    </StackPanel>
+                                <ComboBox ItemsSource="{Binding CloudModels}"
+                                          SelectedItem="{Binding SelectedCloudModel}"
+                                          HorizontalAlignment="Stretch">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,2">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}" />
+                                                    <TextBlock Text=" · " Foreground="{StaticResource MutedTextBrush}" />
+                                                    <TextBlock Text="{Binding Provider}" Foreground="{StaticResource MutedTextBrush}" />
+                                                </StackPanel>
+                                                <Border Grid.Column="1" Background="{StaticResource SurfaceAltBrush}" CornerRadius="4" Padding="6,2" Margin="12,0,4,0">
+                                                    <TextBlock Text="{Binding Pricing}" FontSize="11" Foreground="{StaticResource AccentBrush}" FontWeight="SemiBold" />
+                                                </Border>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
 
-                    <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
-                        <Button Content="{x:Static res:Strings.SettingsDownloadModel}" Command="{Binding DownloadModelCommand}" />
-                        <Button Content="{x:Static res:Strings.SettingsReloadModel}" Margin="8,0,0,0" Command="{Binding ReloadModelCommand}" />
+                                <!-- Details Card for Selected Model -->
+                                <Border Background="{StaticResource SurfaceAltBrush}" CornerRadius="6" Padding="12" Margin="0,12,0,0">
+                                    <StackPanel>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="{Binding SelectedCloudModel.Id}"
+                                                       Foreground="{StaticResource AccentBrush}"
+                                                       FontWeight="SemiBold"
+                                                       FontSize="12" />
+                                            <TextBlock Grid.Column="1"
+                                                       Text="{Binding SelectedCloudModel.Pricing}"
+                                                       Foreground="{StaticResource SuccessBrush}"
+                                                       FontWeight="SemiBold"
+                                                       FontSize="12" />
+                                        </Grid>
+                                        <TextBlock Text="{Binding SelectedCloudModel.Description}"
+                                                   Style="{StaticResource MutedText}"
+                                                   Margin="0,6,0,0"
+                                                   FontSize="12" />
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- API Key Notice -->
+                                <Border Margin="0,12,0,0"
+                                        Padding="10,8"
+                                        CornerRadius="6"
+                                        Background="#224CC38A"
+                                        BorderBrush="{StaticResource SuccessBrush}"
+                                        BorderThickness="1"
+                                        Visibility="{Binding HasApiKeyForCloudStt, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <TextBlock Text="✓ Clave de OpenRouter configurada en la pestaña IA."
+                                               Foreground="{StaticResource SuccessBrush}"
+                                               FontSize="12"
+                                               FontWeight="SemiBold" />
+                                </Border>
+
+                                <Border Margin="0,12,0,0"
+                                        Padding="10,8"
+                                        CornerRadius="6"
+                                        Background="#22E05A5A"
+                                        BorderBrush="{StaticResource DangerBrush}"
+                                        BorderThickness="1"
+                                        Visibility="{Binding HasApiKeyForCloudStt, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Invert}">
+                                    <TextBlock Text="⚠️ Requiere tu clave de OpenRouter. Configúrala en la pestaña IA para transcribir con este modelo."
+                                               Foreground="{StaticResource DangerBrush}"
+                                               FontSize="12"
+                                               FontWeight="SemiBold" />
+                                </Border>
+
+                                <TextBlock Text="💡 Si no hay conexión a internet o el servicio en la nube falla, VoicePod recurrirá automáticamente al motor local si está descargado."
+                                           Style="{StaticResource MutedText}"
+                                           Margin="0,12,0,0"
+                                           FontSize="11" />
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Local STT Section -->
+                        <Border Style="{StaticResource Card}"
+                                Margin="0,16,0,0"
+                                Visibility="{Binding IsLocalStt, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <StackPanel>
+                                <TextBlock Text="{x:Static res:Strings.SettingsModelFolder}" Style="{StaticResource SectionText}" />
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Grid.Column="0" Text="{Binding ModelDirectory}" />
+                                    <Button Grid.Column="1" Content="{x:Static res:Strings.Browse}" Margin="8,0,0,0" Command="{Binding BrowseModelDirectoryCommand}" />
+                                </Grid>
+
+                                <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
+                                    <TextBlock Text="{x:Static res:Strings.SettingsThreads}" Style="{StaticResource BodyText}" VerticalAlignment="Center" />
+                                    <TextBox Width="60" Margin="8,0,0,0" Text="{Binding NumThreads}" />
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
+                                    <Button Content="{x:Static res:Strings.SettingsDownloadModel}" Command="{Binding DownloadModelCommand}" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Common Status & Reload -->
+                        <Border Background="{StaticResource SurfaceColor}" CornerRadius="6" Padding="12" Margin="0,16,0,0" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Text="{x:Static res:Strings.SettingsStatus}" Style="{StaticResource BodyText}" VerticalAlignment="Center" />
+                                    <TextBlock Text="{Binding ModelStatus}"
+                                               Style="{StaticResource BodyText}"
+                                               FontWeight="SemiBold"
+                                               Foreground="{StaticResource AccentBrush}"
+                                               Margin="8,0,0,0"
+                                               VerticalAlignment="Center" />
+                                </StackPanel>
+                                <Button Grid.Column="1" Content="{x:Static res:Strings.SettingsReloadModel}" Command="{Binding ReloadModelCommand}" />
+                            </Grid>
+                        </Border>
                     </StackPanel>
-                </StackPanel>
+                </ScrollViewer>
             </TabItem>
 
             <!-- AI -->

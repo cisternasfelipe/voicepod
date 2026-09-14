@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.IO;
+using System.Net.Http;
 using System.Windows;
 using System.Windows.Threading;
 using Microsoft.Extensions.DependencyInjection;
@@ -145,6 +146,12 @@ public partial class App : Application
         var downloader = services.GetRequiredService<IModelDownloader>();
         var settings = services.GetRequiredService<ISettingsService>().Current;
 
+        if (settings.Stt.Provider == SttProvider.OpenRouterCloud)
+        {
+            _ = Task.Run(() => transcription.InitializeAsync());
+            return;
+        }
+
         var modelDirectory = string.IsNullOrWhiteSpace(settings.Stt.ModelDirectory)
             ? AppPaths.DefaultModelDirectory
             : settings.Stt.ModelDirectory!;
@@ -262,7 +269,14 @@ public partial class App : Application
         services.AddSingleton<IAudioCaptureService, AudioCaptureService>();
         services.AddSingleton<IGlobalHotkeyService, GlobalHotkeyService>();
         services.AddSingleton<IForegroundWindowProvider, ForegroundWindowProvider>();
-        services.AddSingleton<ITranscriptionService, SherpaTranscriptionService>();
+        services.AddSingleton<SherpaTranscriptionService>();
+        services.AddHttpClient("OpenRouterStt");
+        services.AddSingleton<OpenRouterTranscriptionService>(sp =>
+            new OpenRouterTranscriptionService(
+                sp.GetRequiredService<ISettingsService>(),
+                sp.GetRequiredService<IHttpClientFactory>().CreateClient("OpenRouterStt"),
+                sp.GetRequiredService<ILogger<OpenRouterTranscriptionService>>()));
+        services.AddSingleton<ITranscriptionService, HybridTranscriptionService>();
         services.AddHttpClient<IModelDownloader, ModelDownloader>();
         services.AddHttpClient<ILlmClient, OpenAiCompatibleClient>();
         services.AddSingleton<PromptProfileService>();
