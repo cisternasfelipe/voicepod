@@ -33,3 +33,7 @@ desktop.ini
 
 ## IDE Artifacts
 .gemini/
+
+## Installers / Downloads
+source/*.exe
+

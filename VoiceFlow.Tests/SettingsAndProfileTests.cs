@@ -44,6 +44,43 @@ public class HotkeyDefinitionTests
     [InlineData(0x1B, "Esc")]
     public void VirtualKeyNames_CoverCommonKeys(int virtualKey, string expected) =>
         Assert.Equal(expected, VirtualKeyNames.GetName(virtualKey));
+
+    [Fact]
+    public void FourButtons_LeftAndRightModifiers_DisplaysCorrectly()
+    {
+        // Left Control (0xA2), Left Alt (0xA4), Right Control (0xA3), Right Alt (0xA5)
+        var hotkey = new HotkeyDefinition(0xA2, 0xA4, 0xA3, 0xA5);
+
+        Assert.Equal(4, hotkey.Keys.Length);
+        Assert.True(hotkey.IsValid);
+        Assert.Equal("Ctrl + Alt + Ctrl + Alt", hotkey.ToDisplayString());
+    }
+
+    [Fact]
+    public void MoreThanFourButtons_FiveKeysCombination_IsValidAndFormats()
+    {
+        // Ctrl, Alt, Shift, Win, Space (5 buttons)
+        var hotkey = new HotkeyDefinition(0x11, 0x12, 0x10, 0x5B, 0x20);
+
+        Assert.Equal(5, hotkey.Keys.Length);
+        Assert.True(hotkey.IsValid);
+        Assert.Equal("Ctrl + Alt + Shift + Win + Espacio", hotkey.ToDisplayString());
+    }
+
+    [Fact]
+    public void DualHotkeySettings_HoldAndToggleAreIndependent()
+    {
+        var settings = new HotkeySettings
+        {
+            HoldHotkey = new HotkeyDefinition(0xA2, 0xA4, 0xA3, 0xA5),
+            ToggleHotkey = new HotkeyDefinition(0x11, 0x12, 0x20)
+        };
+
+        Assert.NotNull(settings.HoldHotkey);
+        Assert.NotNull(settings.ToggleHotkey);
+        Assert.Equal("Ctrl + Alt + Ctrl + Alt", settings.HoldHotkey.ToDisplayString());
+        Assert.Equal("Ctrl + Alt + Espacio", settings.ToggleHotkey.ToDisplayString());
+    }
 }
 
 public class PromptProfileTests
@@ -124,5 +161,29 @@ public class LlmReasoningTests
         var cleaned = VoiceFlow.Llm.OpenAiCompatibleClient.CleanLlmOutput(input);
 
         Assert.Equal("La primera pantalla que vamos a empezar a modificar es esta pantalla que no está minimizada.", cleaned);
+    }
+}
+
+public class LucideIconsExistTests
+{
+    [Theory]
+    [InlineData("Settings")]
+    [InlineData("Keyboard")]
+    [InlineData("Mic")]
+    [InlineData("Radio")]
+    [InlineData("Sparkles")]
+    [InlineData("User")]
+    [InlineData("History")]
+    [InlineData("Minus")]
+    [InlineData("Plus")]
+    [InlineData("X")]
+    [InlineData("Copy")]
+    [InlineData("Check")]
+    [InlineData("Square")]
+    [InlineData("Zap")]
+    public void VerifyLucideIconExists(string iconName)
+    {
+        Assert.True(Enum.IsDefined(typeof(MahApps.Metro.IconPacks.PackIconLucideKind), iconName),
+            $"Icon '{iconName}' does not exist in PackIconLucideKind!");
     }
 }

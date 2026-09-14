@@ -80,6 +80,9 @@ public sealed class DictationPipeline : IDisposable
 
         _hotkey.Pressed += OnHotkeyPressed;
         _hotkey.Released += OnHotkeyReleased;
+        _hotkey.HoldPressed += OnHoldPressed;
+        _hotkey.HoldReleased += OnHoldReleased;
+        _hotkey.TogglePressed += OnTogglePressed;
         _audio.MaxDurationReached += OnMaxDurationReached;
         _audio.LevelChanged += (_, e) => LevelChanged?.Invoke(this, e);
     }
@@ -306,23 +309,47 @@ public sealed class DictationPipeline : IDisposable
     /// <summary>Raised after a dictation is stored, so an open history window can refresh.</summary>
     public event EventHandler? HistoryChanged;
 
+    private void OnHoldPressed(object? sender, EventArgs e)
+    {
+        _logger.LogInformation("Hold hotkey pressed -> StartRecording");
+        StartRecording();
+    }
+
+    private void OnHoldReleased(object? sender, EventArgs e)
+    {
+        _logger.LogInformation("Hold hotkey released -> StopRecordingAsync");
+        _ = StopRecordingAsync();
+    }
+
+    private void OnTogglePressed(object? sender, EventArgs e)
+    {
+        _logger.LogInformation("Toggle hotkey pressed -> Toggle");
+        Toggle();
+    }
+
     private void OnHotkeyPressed(object? sender, EventArgs e)
     {
-        if (_settings.Current.Hotkey.Mode == HotkeyMode.PushToTalk)
+        if (_hotkey.HoldHotkey is null && _hotkey.ToggleHotkey is null)
         {
-            StartRecording();
-        }
-        else
-        {
-            Toggle();
+            if (_settings.Current.Hotkey.Mode == HotkeyMode.PushToTalk)
+            {
+                StartRecording();
+            }
+            else
+            {
+                Toggle();
+            }
         }
     }
 
     private void OnHotkeyReleased(object? sender, EventArgs e)
     {
-        if (_settings.Current.Hotkey.Mode == HotkeyMode.PushToTalk)
+        if (_hotkey.HoldHotkey is null && _hotkey.ToggleHotkey is null)
         {
-            _ = StopRecordingAsync();
+            if (_settings.Current.Hotkey.Mode == HotkeyMode.PushToTalk)
+            {
+                _ = StopRecordingAsync();
+            }
         }
     }
 
@@ -353,6 +380,9 @@ public sealed class DictationPipeline : IDisposable
         _disposed = true;
         _hotkey.Pressed -= OnHotkeyPressed;
         _hotkey.Released -= OnHotkeyReleased;
+        _hotkey.HoldPressed -= OnHoldPressed;
+        _hotkey.HoldReleased -= OnHoldReleased;
+        _hotkey.TogglePressed -= OnTogglePressed;
         _audio.MaxDurationReached -= OnMaxDurationReached;
         _gate.Dispose();
     }

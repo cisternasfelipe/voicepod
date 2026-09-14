@@ -40,14 +40,34 @@ public sealed class HotkeySettings
 
     public int VirtualKey { get; set; } = HotkeyDefinition.Default.VirtualKey;
 
+    public int[]? Keys { get; set; }
+
     public HotkeyMode Mode { get; set; } = HotkeyMode.Toggle;
 
-    public HotkeyDefinition ToDefinition() => new(Modifiers, VirtualKey);
+    /// <summary>
+    /// Dedicated hotkey for Push-to-Talk ("Mantener presionado para transcribir, soltar para parar").
+    /// </summary>
+    public HotkeyDefinition? HoldHotkey { get; set; }
+
+    /// <summary>
+    /// Dedicated hotkey for Toggle ("Presionar para activar, presionar para apagar").
+    /// </summary>
+    public HotkeyDefinition? ToggleHotkey { get; set; }
+
+    public HotkeyDefinition ToDefinition()
+    {
+        if (Keys is { Length: > 0 })
+        {
+            return new HotkeyDefinition(Keys);
+        }
+        return new HotkeyDefinition(Modifiers, VirtualKey);
+    }
 
     public void Apply(HotkeyDefinition definition)
     {
         Modifiers = definition.Modifiers;
         VirtualKey = definition.VirtualKey;
+        Keys = definition.Keys is { Length: > 0 } ? definition.Keys : null;
     }
 }
 

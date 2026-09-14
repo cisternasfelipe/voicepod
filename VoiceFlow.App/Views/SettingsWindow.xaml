@@ -187,7 +187,7 @@
                     <TabItem Style="{StaticResource SidebarTabItemStyle}">
                         <TabItem.Header>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <iconPacks:PackIconLucide Kind="Sliders" Width="15" Height="15" Margin="0,0,10,0" VerticalAlignment="Center" />
+                                <iconPacks:PackIconLucide Kind="Settings" Width="15" Height="15" Margin="0,0,10,0" VerticalAlignment="Center" />
                                 <TextBlock Text="{x:Static res:Strings.TabGeneral}" VerticalAlignment="Center" />
                             </StackPanel>
                         </TabItem.Header>
@@ -246,60 +246,115 @@
                         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                             <StackPanel>
                                 <TextBlock Text="{x:Static res:Strings.TabHotkey}" Style="{StaticResource HeaderText}" Margin="0,0,0,4" />
-                                <TextBlock Text="Define la combinación de teclas para activar la grabación en cualquier aplicación." Style="{StaticResource MutedText}" Margin="0,0,0,16" />
+                                <TextBlock Text="Configura los atajos de teclado globales. Puedes asignar ambos modos simultáneamente con combinaciones de cualquier número de teclas (incluso más de 4 botones)." Style="{StaticResource MutedText}" Margin="0,0,0,16" />
 
+                                <!-- CARD 1: HOLD TO TALK (PUSH-TO-TALK) -->
                                 <Border Style="{StaticResource Card}" Margin="0,0,0,14">
                                     <StackPanel>
-                                        <TextBlock Text="{x:Static res:Strings.SettingsHotkeyCombination}" Style="{StaticResource SectionText}" />
-                                        <TextBlock Text="{x:Static res:Strings.SettingsHotkeyHint}" Style="{StaticResource MutedText}" Margin="0,0,0,10" />
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,6">
+                                            <iconPacks:PackIconLucide Kind="Mic" Width="14" Height="14" Foreground="{StaticResource AccentBrush}" Margin="0,0,8,0" VerticalAlignment="Center" />
+                                            <TextBlock Text="Atajo: Mantener Presionado (Push-to-Talk)" Style="{StaticResource SectionText}" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                        <TextBlock Text="Mantén presionadas las teclas mientras hablas. Al soltarlas, se detendrá la grabación y se transcribirá automáticamente." Style="{StaticResource BodyText}" Margin="0,0,0,4" />
+                                        <TextBlock Text="Soporta combinaciones de más de 4 botones (ej. Control + Alt + Control + Alt) reconociendo teclas izquierdas y derechas." Style="{StaticResource MutedText}" Margin="0,0,0,12" />
 
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBox x:Name="HotkeyBox"
+                                            <TextBox x:Name="HoldHotkeyBox"
                                                      Width="260"
                                                      VerticalAlignment="Center"
                                                      IsReadOnly="True"
                                                      FontWeight="SemiBold"
-                                                     Text="{Binding HotkeyText, Mode=OneWay}"
-                                                     ToolTip="{x:Static res:Strings.SettingsHotkeyHint}" />
+                                                     Text="{Binding HoldHotkeyText, Mode=OneWay}"
+                                                     ToolTip="Atajo asignado para Mantener Presionado" />
 
-                                            <Button x:Name="RecordHotkeyButton"
-                                                    Content="{x:Static res:Strings.SettingsHotkeyRecord}"
-                                                    VerticalAlignment="Center"
-                                                    Margin="10,0,0,0"
-                                                    Padding="14,8"
-                                                    Click="OnRecordHotkeyClick" />
+                                            <Button x:Name="RecordHoldHotkeyButton"
+                                                     Content="{x:Static res:Strings.SettingsHotkeyRecord}"
+                                                     VerticalAlignment="Center"
+                                                     Margin="10,0,0,0"
+                                                     Padding="14,8"
+                                                     Click="OnRecordHoldHotkeyClick" />
 
                                             <Button Content="{x:Static res:Strings.SettingsHotkeyReset}"
-                                                    VerticalAlignment="Center"
-                                                    Margin="10,0,0,0"
-                                                    Padding="14,8"
-                                                    Command="{Binding ResetHotkeyCommand}" />
+                                                     VerticalAlignment="Center"
+                                                     Margin="10,0,0,0"
+                                                     Padding="12,8"
+                                                     ToolTip="Restablecer a Ctrl + Alt + Ctrl + Alt"
+                                                     Command="{Binding ResetHoldHotkeyCommand}" />
+
+                                            <Button Content="Desactivar"
+                                                     VerticalAlignment="Center"
+                                                     Margin="8,0,0,0"
+                                                     Padding="10,8"
+                                                     Command="{Binding ClearHoldHotkeyCommand}" />
                                         </StackPanel>
 
-                                        <TextBlock x:Name="RecordingStatusText"
+                                        <TextBlock x:Name="HoldRecordingStatusText"
                                                    Text="{x:Static res:Strings.SettingsHotkeyListening}"
                                                    Foreground="{StaticResource AccentBrush}"
                                                    FontWeight="SemiBold"
                                                    Margin="0,10,0,0"
                                                    Visibility="Collapsed" />
 
-                                        <TextBlock Text="{Binding HotkeyMessage}"
+                                        <TextBlock Text="{Binding HoldHotkeyMessage}"
                                                    Style="{StaticResource MutedText}"
                                                    Foreground="{StaticResource DangerBrush}"
                                                    Margin="0,10,0,0"
-                                                   Visibility="{Binding HotkeyMessage, Converter={StaticResource NullToCollapsedConverter}}" />
+                                                   Visibility="{Binding HoldHotkeyMessage, Converter={StaticResource NullToCollapsedConverter}}" />
                                     </StackPanel>
                                 </Border>
 
+                                <!-- CARD 2: TOGGLE (PULSAR PARA ACTIVAR / APAGAR) -->
                                 <Border Style="{StaticResource Card}">
                                     <StackPanel>
-                                        <TextBlock Text="{x:Static res:Strings.SettingsHotkeyMode}" Style="{StaticResource SectionText}" />
-                                        <RadioButton Content="{x:Static res:Strings.SettingsHotkeyToggleOption}"
-                                                     IsChecked="{Binding IsPushToTalk, Converter={StaticResource InverseBooleanConverter}}"
-                                                     Margin="0,4" />
-                                        <RadioButton Content="{x:Static res:Strings.SettingsHotkeyHoldOption}"
-                                                     IsChecked="{Binding IsPushToTalk}"
-                                                     Margin="0,4" />
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,6">
+                                            <iconPacks:PackIconLucide Kind="Radio" Width="14" Height="14" Foreground="{StaticResource SuccessBrush}" Margin="0,0,8,0" VerticalAlignment="Center" />
+                                            <TextBlock Text="Atajo: Alternar / Manos Libres (Toggle)" Style="{StaticResource SectionText}" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                        <TextBlock Text="Presiona la combinación una vez para comenzar a grabar con las manos libres. Presiona nuevamente para finalizar y transcribir." Style="{StaticResource BodyText}" Margin="0,0,0,4" />
+                                        <TextBlock Text="Ideal para dictados largos. Puedes usar una combinación de 4+ teclas o teclas individuales (ej. Ctrl + Alt + Espacio o F8)." Style="{StaticResource MutedText}" Margin="0,0,0,12" />
+
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBox x:Name="ToggleHotkeyBox"
+                                                     Width="260"
+                                                     VerticalAlignment="Center"
+                                                     IsReadOnly="True"
+                                                     FontWeight="SemiBold"
+                                                     Text="{Binding ToggleHotkeyText, Mode=OneWay}"
+                                                     ToolTip="Atajo asignado para Alternar grabación" />
+
+                                            <Button x:Name="RecordToggleHotkeyButton"
+                                                     Content="{x:Static res:Strings.SettingsHotkeyRecord}"
+                                                     VerticalAlignment="Center"
+                                                     Margin="10,0,0,0"
+                                                     Padding="14,8"
+                                                     Click="OnRecordToggleHotkeyClick" />
+
+                                            <Button Content="{x:Static res:Strings.SettingsHotkeyReset}"
+                                                     VerticalAlignment="Center"
+                                                     Margin="10,0,0,0"
+                                                     Padding="12,8"
+                                                     ToolTip="Restablecer a Ctrl + Alt + Espacio"
+                                                     Command="{Binding ResetToggleHotkeyCommand}" />
+
+                                            <Button Content="Desactivar"
+                                                     VerticalAlignment="Center"
+                                                     Margin="8,0,0,0"
+                                                     Padding="10,8"
+                                                     Command="{Binding ClearToggleHotkeyCommand}" />
+                                        </StackPanel>
+
+                                        <TextBlock x:Name="ToggleRecordingStatusText"
+                                                   Text="{x:Static res:Strings.SettingsHotkeyListening}"
+                                                   Foreground="{StaticResource AccentBrush}"
+                                                   FontWeight="SemiBold"
+                                                   Margin="0,10,0,0"
+                                                   Visibility="Collapsed" />
+
+                                        <TextBlock Text="{Binding ToggleHotkeyMessage}"
+                                                   Style="{StaticResource MutedText}"
+                                                   Foreground="{StaticResource DangerBrush}"
+                                                   Margin="0,10,0,0"
+                                                   Visibility="{Binding ToggleHotkeyMessage, Converter={StaticResource NullToCollapsedConverter}}" />
                                     </StackPanel>
                                 </Border>
                             </StackPanel>

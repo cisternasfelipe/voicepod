@@ -29,6 +29,8 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
     private readonly ILogger<SettingsViewModel> _logger;
 
     private HotkeyDefinition _hotkey;
+    private HotkeyDefinition? _holdHotkey;
+    private HotkeyDefinition? _toggleHotkey;
     private bool _micTestRunning;
     private bool _suppressProviderApply;
 
@@ -39,9 +41,13 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
     [ObservableProperty] private UiLanguage _language;
 
     // Hotkey
+    [ObservableProperty] private string _holdHotkeyText = string.Empty;
+    [ObservableProperty] private string _toggleHotkeyText = string.Empty;
     [ObservableProperty] private string _hotkeyText = string.Empty;
     [ObservableProperty] private bool _isPushToTalk;
     [ObservableProperty] private string? _hotkeyMessage;
+    [ObservableProperty] private string? _holdHotkeyMessage;
+    [ObservableProperty] private string? _toggleHotkeyMessage;
 
     // Audio
     [ObservableProperty] private AudioDeviceInfo? _selectedDevice;
@@ -325,6 +331,30 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
         PlaySounds = current.General.PlaySounds;
         Language = current.General.Language;
 
+        _holdHotkey = current.Hotkey.HoldHotkey;
+        _toggleHotkey = current.Hotkey.ToggleHotkey;
+
+        if (_holdHotkey is null && _toggleHotkey is null)
+        {
+            var def = current.Hotkey.ToDefinition();
+            if (current.Hotkey.Mode == HotkeyMode.PushToTalk)
+            {
+                _holdHotkey = def;
+            }
+            else
+            {
+                _toggleHotkey = def;
+            }
+        }
+
+        HoldHotkeyText = _holdHotkey is not null && _holdHotkey.IsValid
+            ? HotkeyFormatter.Describe(_holdHotkey)
+            : "Ninguno (Desactivado)";
+
+        ToggleHotkeyText = _toggleHotkey is not null && _toggleHotkey.IsValid
+            ? HotkeyFormatter.Describe(_toggleHotkey)
+            : "Ninguno (Desactivado)";
+
         _hotkey = current.Hotkey.ToDefinition();
         HotkeyText = HotkeyFormatter.Describe(_hotkey);
         IsPushToTalk = current.Hotkey.Mode == HotkeyMode.PushToTalk;
@@ -409,6 +439,48 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
 
     public string ActiveProfileName => _settings.Current.GetActiveProfile().Name;
 
+    public void SetHoldHotkey(HotkeyDefinition? definition)
+    {
+        if (definition is null || !definition.IsValid)
+        {
+            _holdHotkey = null;
+            HoldHotkeyText = "Ninguno (Desactivado)";
+            HoldHotkeyMessage = null;
+            return;
+        }
+
+        _holdHotkey = definition;
+        HoldHotkeyText = HotkeyFormatter.Describe(definition);
+        HoldHotkeyMessage = null;
+    }
+
+    public void SetToggleHotkey(HotkeyDefinition? definition)
+    {
+        if (definition is null || !definition.IsValid)
+        {
+            _toggleHotkey = null;
+            ToggleHotkeyText = "Ninguno (Desactivado)";
+            ToggleHotkeyMessage = null;
+            return;
+        }
+
+        _toggleHotkey = definition;
+        ToggleHotkeyText = HotkeyFormatter.Describe(definition);
+        ToggleHotkeyMessage = null;
+    }
+
+    [RelayCommand]
+    private void ResetHoldHotkey() => SetHoldHotkey(new HotkeyDefinition(0xA2, 0xA4, 0xA3, 0xA5));
+
+    [RelayCommand]
+    private void ClearHoldHotkey() => SetHoldHotkey(null);
+
+    [RelayCommand]
+    private void ResetToggleHotkey() => SetToggleHotkey(HotkeyDefinition.Default);
+
+    [RelayCommand]
+    private void ClearToggleHotkey() => SetToggleHotkey(null);
+
     /// <summary>Applies a combination captured by the hotkey box.</summary>
     public void SetHotkey(HotkeyDefinition definition)
     {
@@ -421,6 +493,15 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
         _hotkey = definition;
         HotkeyText = HotkeyFormatter.Describe(definition);
         HotkeyMessage = null;
+
+        if (IsPushToTalk)
+        {
+            SetHoldHotkey(definition);
+        }
+        else
+        {
+            SetToggleHotkey(definition);
+        }
     }
 
     [RelayCommand]
@@ -752,8 +833,12 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
         current.General.PlaySounds = PlaySounds;
         current.General.Language = Language;
 
-        current.Hotkey.Apply(_hotkey);
-        current.Hotkey.Mode = IsPushToTalk ? HotkeyMode.PushToTalk : HotkeyMode.Toggle;
+        current.Hotkey.HoldHotkey = _holdHotkey;
+        current.Hotkey.ToggleHotkey = _toggleHotkey;
+
+        var primary = _holdHotkey ?? _toggleHotkey ?? _hotkey;
+        current.Hotkey.Apply(primary);
+        current.Hotkey.Mode = _holdHotkey is not null ? HotkeyMode.PushToTalk : HotkeyMode.Toggle;
 
         current.Audio.InputDeviceId = SelectedDevice?.Id;
         current.Audio.MaxRecordingSeconds = MaxRecordingSeconds;

@@ -308,18 +308,34 @@ public partial class App : Application
         var settings = services.GetRequiredService<ISettingsService>().Current;
         var hotkey = services.GetRequiredService<IGlobalHotkeyService>();
 
-        var definition = settings.Hotkey.ToDefinition();
-        var result = hotkey.Register(definition, settings.Hotkey.Mode);
+        var holdDef = settings.Hotkey.HoldHotkey;
+        var toggleDef = settings.Hotkey.ToggleHotkey;
+        if (holdDef is null && toggleDef is null)
+        {
+            var def = settings.Hotkey.ToDefinition();
+            if (settings.Hotkey.Mode == HotkeyMode.PushToTalk)
+            {
+                holdDef = def;
+            }
+            else
+            {
+                toggleDef = def;
+            }
+        }
+
+        var result = hotkey.RegisterDual(holdDef, toggleDef);
 
         if (result.Success)
         {
             _mainViewModel?.SetHotkeyError(null);
             settingsViewModel?.SetHotkeyRegistrationError(null);
-            _tray?.UpdateToolTip($"VoiceFlow — {HotkeyFormatter.Describe(definition)}");
+            var active = hotkey.Current ?? holdDef ?? toggleDef ?? HotkeyDefinition.Default;
+            _tray?.UpdateToolTip($"VoiceFlow — {HotkeyFormatter.Describe(active)}");
             return;
         }
 
-        var message = DescribeHotkeyFailure(result, definition);
+        var fallbackDef = hotkey.Current ?? holdDef ?? toggleDef ?? HotkeyDefinition.Default;
+        var message = DescribeHotkeyFailure(result, fallbackDef);
         _mainViewModel?.SetHotkeyError(message);
         settingsViewModel?.SetHotkeyRegistrationError(message);
         _tray?.ShowMessage("VoiceFlow", message, isError: true);

@@ -37,13 +37,29 @@ public interface IGlobalHotkeyService : IDisposable
 {
     HotkeyDefinition? Current { get; }
 
+    HotkeyDefinition? HoldHotkey => null;
+
+    HotkeyDefinition? ToggleHotkey => null;
+
     /// <summary>Raised when the combination goes down (both modes).</summary>
     event EventHandler? Pressed;
 
     /// <summary>Raised when the combination is released; only meaningful in push-to-talk.</summary>
     event EventHandler? Released;
 
+    /// <summary>Raised when the Hold / Push-to-Talk combination goes down.</summary>
+    event EventHandler? HoldPressed { add { } remove { } }
+
+    /// <summary>Raised when the Hold / Push-to-Talk combination is released.</summary>
+    event EventHandler? HoldReleased { add { } remove { } }
+
+    /// <summary>Raised when the Toggle combination is pressed.</summary>
+    event EventHandler? TogglePressed { add { } remove { } }
+
     HotkeyRegistrationResult Register(HotkeyDefinition definition, HotkeyMode mode);
+
+    HotkeyRegistrationResult RegisterDual(HotkeyDefinition? holdDefinition, HotkeyDefinition? toggleDefinition) =>
+        Register(holdDefinition ?? toggleDefinition ?? HotkeyDefinition.Default, holdDefinition is not null ? HotkeyMode.PushToTalk : HotkeyMode.Toggle);
 
     void Unregister();
 }

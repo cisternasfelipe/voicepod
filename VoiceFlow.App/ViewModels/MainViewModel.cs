@@ -78,9 +78,26 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
         ApplyModelState(_transcription.State);
     }
 
-    public string ModeText => _settings.Current.Hotkey.Mode == HotkeyMode.PushToTalk
-        ? Strings.ModeHold
-        : Strings.ModeToggle;
+    public string ModeText
+    {
+        get
+        {
+            var hk = _settings.Current.Hotkey;
+            if (hk.HoldHotkey is not null && hk.ToggleHotkey is not null)
+            {
+                return "Mantener + Alternar";
+            }
+            if (hk.HoldHotkey is not null)
+            {
+                return Strings.ModeHold;
+            }
+            if (hk.ToggleHotkey is not null)
+            {
+                return Strings.ModeToggle;
+            }
+            return hk.Mode == HotkeyMode.PushToTalk ? Strings.ModeHold : Strings.ModeToggle;
+        }
+    }
 
     public event EventHandler? SettingsRequested;
     public event EventHandler? HistoryRequested;
@@ -132,7 +149,23 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
 
     private void RefreshHotkeyText()
     {
-        HotkeyText = HotkeyFormatter.Describe(_settings.Current.Hotkey.ToDefinition());
+        var hk = _settings.Current.Hotkey;
+        if (hk.HoldHotkey is not null && hk.ToggleHotkey is not null)
+        {
+            HotkeyText = $"{HotkeyFormatter.Describe(hk.HoldHotkey)} · {HotkeyFormatter.Describe(hk.ToggleHotkey)}";
+        }
+        else if (hk.HoldHotkey is not null)
+        {
+            HotkeyText = HotkeyFormatter.Describe(hk.HoldHotkey);
+        }
+        else if (hk.ToggleHotkey is not null)
+        {
+            HotkeyText = HotkeyFormatter.Describe(hk.ToggleHotkey);
+        }
+        else
+        {
+            HotkeyText = HotkeyFormatter.Describe(hk.ToDefinition());
+        }
         OnPropertyChanged(nameof(ModeText));
     }
 

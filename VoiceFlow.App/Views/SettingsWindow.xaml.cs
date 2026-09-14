@@ -54,42 +54,73 @@ public partial class SettingsWindow : Window
     private void OnMinimizeClick(object sender, RoutedEventArgs e) =>
         WindowState = WindowState.Minimized;
 
-    private void OnRecordHotkeyClick(object sender, RoutedEventArgs e)
+    private enum HotkeyTargetSlot { None, Hold, Toggle }
+    private HotkeyTargetSlot _recordingSlot = HotkeyTargetSlot.None;
+
+    private void OnRecordHoldHotkeyClick(object sender, RoutedEventArgs e)
     {
-        if (_captureSession is null)
-        {
-            StartRecordingHotkey();
-        }
-        else
+        if (_recordingSlot == HotkeyTargetSlot.Hold)
         {
             StopRecordingHotkey();
         }
+        else
+        {
+            StartRecordingSlot(HotkeyTargetSlot.Hold);
+        }
     }
 
-    private void StartRecordingHotkey()
+    private void OnRecordToggleHotkeyClick(object sender, RoutedEventArgs e)
     {
-        RecordingStatusText.Visibility = Visibility.Visible;
-        RecordingStatusText.Text = Strings.SettingsHotkeyListening;
-        RecordHotkeyButton.Content = Strings.Cancel;
-        HotkeyBox.Text = "...";
+        if (_recordingSlot == HotkeyTargetSlot.Toggle)
+        {
+            StopRecordingHotkey();
+        }
+        else
+        {
+            StartRecordingSlot(HotkeyTargetSlot.Toggle);
+        }
+    }
+
+    private void StartRecordingSlot(HotkeyTargetSlot slot)
+    {
+        StopRecordingHotkey();
+        _recordingSlot = slot;
+
+        var box = slot == HotkeyTargetSlot.Hold ? HoldHotkeyBox : ToggleHotkeyBox;
+        var btn = slot == HotkeyTargetSlot.Hold ? RecordHoldHotkeyButton : RecordToggleHotkeyButton;
+        var status = slot == HotkeyTargetSlot.Hold ? HoldRecordingStatusText : ToggleRecordingStatusText;
+
+        status.Visibility = Visibility.Visible;
+        status.Text = Strings.SettingsHotkeyListening;
+        btn.Content = Strings.Cancel;
+        box.Text = "...";
 
         _captureSession = new HotkeyCaptureSession();
         _captureSession.HotkeyCaptured += (_, hotkey) => Dispatcher.BeginInvoke(() =>
         {
-            _viewModel.SetHotkey(hotkey);
+            if (slot == HotkeyTargetSlot.Hold)
+            {
+                _viewModel.SetHoldHotkey(hotkey);
+            }
+            else
+            {
+                _viewModel.SetToggleHotkey(hotkey);
+            }
             StopRecordingHotkey();
         });
+
         _captureSession.PreviewUpdated += (_, preview) => Dispatcher.BeginInvoke(() =>
         {
             if (_captureSession is not null)
             {
                 if (!string.IsNullOrWhiteSpace(preview.DisplayText))
                 {
-                    HotkeyBox.Text = preview.DisplayText;
+                    box.Text = preview.DisplayText;
                 }
-                RecordingStatusText.Text = preview.HintText;
+                status.Text = preview.HintText;
             }
         });
+
         _captureSession.Cancelled += (_, _) => Dispatcher.BeginInvoke(StopRecordingHotkey);
         _captureSession.Start();
     }
@@ -99,10 +130,19 @@ public partial class SettingsWindow : Window
         _captureSession?.Dispose();
         _captureSession = null;
 
-        RecordingStatusText.Visibility = Visibility.Collapsed;
-        RecordingStatusText.Text = Strings.SettingsHotkeyListening;
-        RecordHotkeyButton.Content = Strings.SettingsHotkeyRecord;
-        HotkeyBox.Text = _viewModel.HotkeyText;
+        if (_recordingSlot != HotkeyTargetSlot.None)
+        {
+            HoldRecordingStatusText.Visibility = Visibility.Collapsed;
+            ToggleRecordingStatusText.Visibility = Visibility.Collapsed;
+
+            RecordHoldHotkeyButton.Content = Strings.SettingsHotkeyRecord;
+            RecordToggleHotkeyButton.Content = Strings.SettingsHotkeyRecord;
+
+            HoldHotkeyBox.Text = _viewModel.HoldHotkeyText;
+            ToggleHotkeyBox.Text = _viewModel.ToggleHotkeyText;
+
+            _recordingSlot = HotkeyTargetSlot.None;
+        }
     }
 
     private void OnApiKeyChanged(object sender, RoutedEventArgs e) => _viewModel.ApiKey = ApiKeyBox.Password;
@@ -118,7 +158,6 @@ public partial class SettingsWindow : Window
     protected override void OnClosed(EventArgs e)
     {
         StopRecordingHotkey();
-        _viewModel.Dispose();
         base.OnClosed(e);
     }
 }

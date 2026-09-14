@@ -31,6 +31,11 @@ public static class HotkeyFormatter
 
     public static string Describe(HotkeyDefinition definition)
     {
+        if (definition.Keys is { Length: > 0 })
+        {
+            return string.Join(" + ", definition.Keys.Select(DescribeKey));
+        }
+
         var text = new StringBuilder();
 
         if (definition.Modifiers.HasFlag(HotkeyModifiers.Control)) text.Append("Ctrl + ");

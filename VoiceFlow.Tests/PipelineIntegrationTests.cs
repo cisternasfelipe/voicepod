@@ -200,6 +200,24 @@ public class PipelineIntegrationTests : IDisposable
             remove { }
         }
 
+        public event EventHandler? HoldPressed
+        {
+            add { }
+            remove { }
+        }
+
+        public event EventHandler? HoldReleased
+        {
+            add { }
+            remove { }
+        }
+
+        public event EventHandler? TogglePressed
+        {
+            add { }
+            remove { }
+        }
+
         public HotkeyRegistrationResult Register(HotkeyDefinition definition, HotkeyMode mode) =>
             HotkeyRegistrationResult.Ok();
 

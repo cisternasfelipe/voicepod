@@ -19,11 +19,9 @@ public sealed class HotkeyCaptureSession : IDisposable
 {
     private readonly HookProc _hookProc;
     private readonly object _sync = new();
-    private readonly HashSet<int> _keysDown = new();
-
+    private readonly List<int> _maxHeldCombination = new();
+    private readonly HashSet<int> _keysCurrentlyDown = new();
     private nint _hookHandle;
-    private HotkeyModifiers _accumulatedModifiers = HotkeyModifiers.None;
-    private int _accumulatedKey;
     private Timer? _debounceTimer;
     private bool _disposed;
 
@@ -48,9 +46,8 @@ public sealed class HotkeyCaptureSession : IDisposable
                 return;
             }
 
-            _keysDown.Clear();
-            _accumulatedModifiers = HotkeyModifiers.None;
-            _accumulatedKey = 0;
+            _keysCurrentlyDown.Clear();
+            _maxHeldCombination.Clear();
             _debounceTimer?.Dispose();
             _debounceTimer = null;
 
@@ -72,7 +69,8 @@ public sealed class HotkeyCaptureSession : IDisposable
                 _hookHandle = 0;
             }
 
-            _keysDown.Clear();
+            _keysCurrentlyDown.Clear();
+            _maxHeldCombination.Clear();
         }
     }
 
@@ -116,54 +114,44 @@ public sealed class HotkeyCaptureSession : IDisposable
 
                 _debounceTimer?.Dispose();
                 _debounceTimer = null;
-                _keysDown.Add(vkCode);
 
-                if (IsModifierVk(vkCode, out var modifier))
+                _keysCurrentlyDown.Add(vkCode);
+                if (!_maxHeldCombination.Contains(vkCode))
                 {
-                    _accumulatedModifiers |= modifier;
-                    ModifiersChanged?.Invoke(this, _accumulatedModifiers);
+                    _maxHeldCombination.Add(vkCode);
+                }
 
-                    var count = CountModifiers(_accumulatedModifiers);
-                    var previewDef = new HotkeyDefinition(_accumulatedModifiers, 0);
-                    var displayText = previewDef.ToDisplayString();
+                var previewDef = new HotkeyDefinition(_maxHeldCombination.ToArray());
+                var displayText = previewDef.ToDisplayString();
+                ModifiersChanged?.Invoke(this, previewDef.Modifiers);
 
-                    string hint;
-                    if (count >= 2)
-                    {
-                        hint = "🟢 ¡Suelta las teclas para guardar!";
-                    }
-                    else
-                    {
-                        displayText += " + ...";
-                        hint = "🔴 Presiona otra tecla para completar (ej: Alt, Espacio, F8)...";
-                    }
-
-                    PreviewUpdated?.Invoke(this, new HotkeyCapturePreview(previewDef, displayText, hint));
+                string hint;
+                var hasNonModifier = _maxHeldCombination.Any(k => !IsModifierVk(k));
+                if (_maxHeldCombination.Count >= 2 || hasNonModifier)
+                {
+                    hint = "🟢 ¡Suelta las teclas para guardar la combinación!";
                 }
                 else
                 {
-                    // Regular key pressed (e.g. Space, F8, A, Enter, etc.)
-                    _accumulatedKey = vkCode;
-                    var definition = new HotkeyDefinition(_accumulatedModifiers, vkCode);
-                    Stop();
-                    HotkeyCaptured?.Invoke(this, definition);
+                    displayText += " + ...";
+                    hint = "🔴 Presiona otra tecla para completar (ej: Alt, Espacio, F8)...";
                 }
+
+                PreviewUpdated?.Invoke(this, new HotkeyCapturePreview(previewDef, displayText, hint));
             }
             else // isUp
             {
-                _keysDown.Remove(vkCode);
+                _keysCurrentlyDown.Remove(vkCode);
 
-                // If a regular key was already captured on isDown, nothing to do
-                if (_accumulatedKey != 0)
+                if (_maxHeldCombination.Count == 0)
                 {
                     return;
                 }
 
-                var modCount = CountModifiers(_accumulatedModifiers);
-                if (modCount >= 2)
+                // If only 1 modifier key was tapped and released alone (e.g. tapped only Left Ctrl)
+                if (_maxHeldCombination.Count == 1 && IsModifierVk(_maxHeldCombination[0]))
                 {
-                    // If all keys are released (or after tiny debounce), finalize pure modifiers (e.g. Ctrl + Alt)
-                    if (_keysDown.Count == 0)
+                    if (_keysCurrentlyDown.Count == 0)
                     {
                         _debounceTimer?.Dispose();
                         _debounceTimer = new Timer(_ =>
@@ -171,81 +159,39 @@ public sealed class HotkeyCaptureSession : IDisposable
                             lock (_sync)
                             {
                                 if (_hookHandle == 0) return;
-                                var def = new HotkeyDefinition(_accumulatedModifiers, 0);
-                                Stop();
-                                HotkeyCaptured?.Invoke(this, def);
+                                if (_keysCurrentlyDown.Count == 0 && _maxHeldCombination.Count == 1 && IsModifierVk(_maxHeldCombination[0]))
+                                {
+                                    _maxHeldCombination.Clear();
+                                    PreviewUpdated?.Invoke(this, new HotkeyCapturePreview(
+                                        new HotkeyDefinition(),
+                                        "",
+                                        "🔴 Un solo modificador no es válido. Presiona una combinación (ej: Ctrl + Alt o Ctrl + Alt + Ctrl + Alt)."
+                                    ));
+                                }
                             }
-                        }, null, 250, Timeout.Infinite);
+                        }, null, 700, Timeout.Infinite);
                     }
+                    return;
                 }
-                else if (modCount == 1 && _keysDown.Count == 0)
+
+                // Valid combination (2+ keys, or single non-modifier key like F8)
+                _debounceTimer?.Dispose();
+                _debounceTimer = new Timer(_ =>
                 {
-                    // A single modifier was released alone (e.g. user pressed and released just Ctrl)
-                    // Wait up to 1000ms for a second key; if nothing pressed, reset
-                    _debounceTimer?.Dispose();
-                    _debounceTimer = new Timer(_ =>
+                    lock (_sync)
                     {
-                        lock (_sync)
-                        {
-                            if (_hookHandle == 0) return;
-                            if (_keysDown.Count == 0 && CountModifiers(_accumulatedModifiers) == 1)
-                            {
-                                _accumulatedModifiers = HotkeyModifiers.None;
-                                PreviewUpdated?.Invoke(this, new HotkeyCapturePreview(
-                                    new HotkeyDefinition(HotkeyModifiers.None, 0),
-                                    "",
-                                    "🔴 Un solo modificador no es válido. Presiona una combinación (ej: Ctrl + Alt)."
-                                ));
-                            }
-                        }
-                    }, null, 1000, Timeout.Infinite);
-                }
+                        if (_hookHandle == 0 || _maxHeldCombination.Count == 0) return;
+                        var finalDef = new HotkeyDefinition(_maxHeldCombination.ToArray());
+                        Stop();
+                        HotkeyCaptured?.Invoke(this, finalDef);
+                    }
+                }, null, 180, Timeout.Infinite);
             }
         }
     }
 
-    private static bool IsModifierVk(int vkCode, out HotkeyModifiers modifier)
-    {
-        switch (vkCode)
-        {
-            case 0x11: // VK_CONTROL
-            case 0xA2: // VK_LCONTROL
-            case 0xA3: // VK_RCONTROL
-                modifier = HotkeyModifiers.Control;
-                return true;
-
-            case 0x12: // VK_MENU (Alt)
-            case 0xA4: // VK_LMENU
-            case 0xA5: // VK_RMENU
-                modifier = HotkeyModifiers.Alt;
-                return true;
-
-            case 0x10: // VK_SHIFT
-            case 0xA0: // VK_LSHIFT
-            case 0xA1: // VK_RSHIFT
-                modifier = HotkeyModifiers.Shift;
-                return true;
-
-            case 0x5B: // VK_LWIN
-            case 0x5C: // VK_RWIN
-                modifier = HotkeyModifiers.Win;
-                return true;
-
-            default:
-                modifier = HotkeyModifiers.None;
-                return false;
-        }
-    }
-
-    private static int CountModifiers(HotkeyModifiers modifiers)
-    {
-        var count = 0;
-        if (modifiers.HasFlag(HotkeyModifiers.Control)) count++;
-        if (modifiers.HasFlag(HotkeyModifiers.Alt)) count++;
-        if (modifiers.HasFlag(HotkeyModifiers.Shift)) count++;
-        if (modifiers.HasFlag(HotkeyModifiers.Win)) count++;
-        return count;
-    }
+    private static bool IsModifierVk(int vkCode) =>
+        vkCode is 0x10 or 0x11 or 0x12 or 0x5B or 0x5C or 0xA0 or 0xA1 or 0xA2 or 0xA3 or 0xA4 or 0xA5;
 
     public void Dispose()
     {
