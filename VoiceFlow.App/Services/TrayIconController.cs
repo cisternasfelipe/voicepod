@@ -31,7 +31,7 @@ public sealed class TrayIconController : IDisposable
 
         _icon = new TaskbarIcon
         {
-            ToolTipText = "VoiceFlow",
+            ToolTipText = "VoicePod",
             IconSource = bitmap,
             MenuActivation = PopupActivationMode.RightClick,
             NoLeftClickDelay = true

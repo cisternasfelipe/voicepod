@@ -8,6 +8,7 @@
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=vm:SettingsViewModel}"
         Title="{x:Static res:Strings.SettingsTitle}"
+        Icon="pack://application:,,,/VoiceFlow;component/Resources/voiceflow.ico"
         Height="620"
         Width="780"
         MinHeight="520"

@@ -8,6 +8,7 @@
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=vm:HistoryViewModel}"
         Title="{x:Static res:Strings.HistoryTitle}"
+        Icon="pack://application:,,,/VoiceFlow;component/Resources/voiceflow.ico"
         Height="640"
         Width="900"
         MinHeight="420"

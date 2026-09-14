@@ -7,7 +7,8 @@
         xmlns:res="clr-namespace:VoiceFlow.App.Resources"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
-        Title="VoiceFlow"
+        Title="VoicePod"
+        Icon="pack://application:,,,/VoiceFlow;component/Resources/voiceflow.ico"
         Height="520"
         Width="720"
         MinHeight="420"
@@ -27,7 +28,7 @@
         <!-- Header -->
         <Grid Grid.Row="0" Margin="0,0,0,16">
             <StackPanel HorizontalAlignment="Left">
-                <TextBlock Text="VoiceFlow" Style="{StaticResource HeaderText}" />
+                <TextBlock Text="VoicePod" Style="{StaticResource HeaderText}" />
                 <TextBlock Text="{x:Static res:Strings.MainSubtitle}" Style="{StaticResource MutedText}" />
             </StackPanel>
 
