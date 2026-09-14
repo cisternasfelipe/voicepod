@@ -24,7 +24,7 @@ yarn-error.log*
 *.db
 *.db-shm
 *.db-wal
-models/
+/models/
 
 ## OS Artifacts
 Thumbs.db
