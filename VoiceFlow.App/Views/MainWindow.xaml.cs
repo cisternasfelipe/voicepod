@@ -57,7 +57,9 @@ public partial class MainWindow : Window
     {
         if (MaximizeIcon is not null)
         {
-            MaximizeIcon.Text = WindowState == WindowState.Maximized ? "🗗" : "🗖";
+            MaximizeIcon.Kind = WindowState == WindowState.Maximized
+                ? MahApps.Metro.IconPacks.PackIconLucideKind.Copy
+                : MahApps.Metro.IconPacks.PackIconLucideKind.Square;
         }
 
         if (WindowBorder is not null)
