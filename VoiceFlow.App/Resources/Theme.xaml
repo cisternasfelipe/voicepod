@@ -11,22 +11,30 @@
     <Color x:Key="BackgroundColor">#FF16181D</Color>
     <Color x:Key="SurfaceColor">#FF1E2128</Color>
     <Color x:Key="SurfaceAltColor">#FF272B34</Color>
-    <Color x:Key="BorderColor">#FF343945</Color>
+    <Color x:Key="BorderColor">#FF3E4556</Color>
     <Color x:Key="AccentColor">#FF4C8DFF</Color>
     <Color x:Key="TextColor">#FFE8EAF0</Color>
     <Color x:Key="MutedTextColor">#FF9AA3B4</Color>
     <Color x:Key="DangerColor">#FFE05A5A</Color>
     <Color x:Key="SuccessColor">#FF4CC38A</Color>
+    <Color x:Key="LineaColor">#FF3E4556</Color>
 
     <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}" />
     <SolidColorBrush x:Key="SurfaceBrush" Color="{StaticResource SurfaceColor}" />
     <SolidColorBrush x:Key="SurfaceAltBrush" Color="{StaticResource SurfaceAltColor}" />
     <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}" />
+    <SolidColorBrush x:Key="LineaBrush" Color="{StaticResource LineaColor}" />
     <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}" />
     <SolidColorBrush x:Key="TextBrush" Color="{StaticResource TextColor}" />
     <SolidColorBrush x:Key="MutedTextBrush" Color="{StaticResource MutedTextColor}" />
     <SolidColorBrush x:Key="DangerBrush" Color="{StaticResource DangerColor}" />
     <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource SuccessColor}" />
+
+    <!-- Design Tokens: borde-sutil: 2.3px solid var(linea) -->
+    <Thickness x:Key="BordeSutilThickness">2.3</Thickness>
+    <CornerRadius x:Key="ControlCornerRadius">10</CornerRadius>
+    <CornerRadius x:Key="CardCornerRadius">12</CornerRadius>
+    <CornerRadius x:Key="WindowCornerRadius">14</CornerRadius>
 
     <Style x:Key="BodyText" TargetType="TextBlock">
         <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
@@ -54,8 +62,8 @@
     <Style TargetType="Button">
         <Setter Property="Background" Value="{StaticResource SurfaceAltBrush}" />
         <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
-        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush" Value="{StaticResource LineaBrush}" />
+        <Setter Property="BorderThickness" Value="2.3" />
         <Setter Property="Padding" Value="14,7" />
         <Setter Property="FontFamily" Value="Segoe UI" />
         <Setter Property="FontSize" Value="13" />
@@ -67,7 +75,7 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="6">
+                            CornerRadius="10">
                         <ContentPresenter HorizontalAlignment="Center"
                                           VerticalAlignment="Center"
                                           Margin="{TemplateBinding Padding}" />
@@ -75,6 +83,7 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="Root" Property="Background" Value="#FF333945" />
+                            <Setter TargetName="Root" Property="BorderBrush" Value="#FF545E75" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Opacity" Value="0.45" />
@@ -89,6 +98,7 @@
     <Style x:Key="AccentButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
         <Setter Property="Background" Value="{StaticResource AccentBrush}" />
         <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+        <Setter Property="BorderThickness" Value="2.3" />
         <Setter Property="Foreground" Value="White" />
         <Setter Property="FontWeight" Value="SemiBold" />
     </Style>
@@ -149,8 +159,8 @@
     <Style x:Key="NavPillButton" TargetType="Button">
         <Setter Property="Background" Value="{StaticResource SurfaceAltBrush}" />
         <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
-        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush" Value="{StaticResource LineaBrush}" />
+        <Setter Property="BorderThickness" Value="2.3" />
         <Setter Property="Padding" Value="14,6" />
         <Setter Property="FontFamily" Value="Segoe UI" />
         <Setter Property="FontSize" Value="12" />
@@ -163,7 +173,7 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="8">
+                            CornerRadius="10">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}" />
                     </Border>
                     <ControlTemplate.Triggers>
@@ -192,7 +202,7 @@
         </Setter>
         <Setter Property="Foreground" Value="White" />
         <Setter Property="BorderBrush" Value="#FF6EA5FF" />
-        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderThickness" Value="2.3" />
         <Setter Property="Padding" Value="20,10" />
         <Setter Property="FontFamily" Value="Segoe UI" />
         <Setter Property="FontSize" Value="14" />
@@ -205,7 +215,7 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="8">
+                            CornerRadius="10">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}" />
                     </Border>
                     <ControlTemplate.Triggers>
@@ -213,8 +223,8 @@
                             <Setter TargetName="Root" Property="Background">
                                 <Setter.Value>
                                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                        <GradientStop Color="#FF64A0FF" Offset="0" />
-                                        <GradientStop Color="#FF3D7DE8" Offset="1" />
+                                         <GradientStop Color="#FF64A0FF" Offset="0" />
+                                         <GradientStop Color="#FF3D7DE8" Offset="1" />
                                     </LinearGradientBrush>
                                 </Setter.Value>
                             </Setter>
@@ -250,14 +260,15 @@
             </Setter.Value>
         </Setter>
         <Setter Property="BorderBrush" Value="#FFFF8080" />
+        <Setter Property="BorderThickness" Value="2.3" />
     </Style>
 
     <!-- Secondary Action Button (Cancelar) -->
     <Style x:Key="SecondaryActionButton" TargetType="Button">
         <Setter Property="Background" Value="{StaticResource SurfaceAltBrush}" />
         <Setter Property="Foreground" Value="{StaticResource MutedTextBrush}" />
-        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush" Value="{StaticResource LineaBrush}" />
+        <Setter Property="BorderThickness" Value="2.3" />
         <Setter Property="Padding" Value="16,8" />
         <Setter Property="FontFamily" Value="Segoe UI" />
         <Setter Property="FontSize" Value="13" />
@@ -270,13 +281,14 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="8">
+                            CornerRadius="10">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="Root" Property="Background" Value="#FF353A47" />
                             <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+                            <Setter TargetName="Root" Property="BorderBrush" Value="#FF545E75" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Opacity" Value="0.35" />
@@ -292,12 +304,36 @@
         <Setter Property="Background" Value="{StaticResource SurfaceAltBrush}" />
         <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
         <Setter Property="CaretBrush" Value="{StaticResource TextBrush}" />
-        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Padding" Value="8,6" />
+        <Setter Property="BorderBrush" Value="{StaticResource LineaBrush}" />
+        <Setter Property="BorderThickness" Value="2.3" />
+        <Setter Property="Padding" Value="10,8" />
         <Setter Property="FontFamily" Value="Segoe UI" />
         <Setter Property="FontSize" Value="13" />
         <Setter Property="SelectionBrush" Value="{StaticResource AccentBrush}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Border x:Name="Root"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="8">
+                        <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Root" Property="BorderBrush" Value="#FF545E75" />
+                        </Trigger>
+                        <Trigger Property="IsFocused" Value="True">
+                            <Setter TargetName="Root" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.45" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <!-- The stock ComboBox keeps its light system chrome, which would leave light text on a
@@ -310,9 +346,9 @@
                 <ControlTemplate TargetType="ToggleButton">
                     <Border x:Name="Root"
                             Background="{StaticResource SurfaceAltBrush}"
-                            BorderBrush="{StaticResource BorderBrush}"
-                            BorderThickness="1"
-                            CornerRadius="6">
+                            BorderBrush="{StaticResource LineaBrush}"
+                            BorderThickness="2.3"
+                            CornerRadius="8">
                         <Path x:Name="Arrow"
                               HorizontalAlignment="Right"
                               VerticalAlignment="Center"
@@ -323,6 +359,7 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="Root" Property="Background" Value="#FF333945" />
+                            <Setter TargetName="Root" Property="BorderBrush" Value="#FF545E75" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -429,9 +466,9 @@
 
     <Style x:Key="Card" TargetType="Border">
         <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
-        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="BorderBrush" Value="{StaticResource LineaBrush}" />
+        <Setter Property="BorderThickness" Value="2.3" />
+        <Setter Property="CornerRadius" Value="12" />
         <Setter Property="Padding" Value="16" />
     </Style>
 
