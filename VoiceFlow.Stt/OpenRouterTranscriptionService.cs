@@ -65,18 +65,33 @@ public sealed class OpenRouterTranscriptionService : ITranscriptionService
         var stopwatch = Stopwatch.StartNew();
         var wavBytes = audio.ToWavBytes();
 
-        using var content = new MultipartFormDataContent();
+        var boundary = "----VoicePod" + Guid.NewGuid().ToString("N");
+        using var content = new MultipartFormDataContent(boundary);
+        content.Headers.Remove("Content-Type");
+        content.Headers.TryAddWithoutValidation("Content-Type", $"multipart/form-data; boundary={boundary}");
+
         using var fileContent = new ByteArrayContent(wavBytes);
         fileContent.Headers.ContentType = new MediaTypeHeaderValue("audio/wav");
-        content.Add(fileContent, "file", "audio.wav");
+        fileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
+        {
+            Name = "\"file\"",
+            FileName = "\"audio.wav\""
+        };
+        content.Add(fileContent);
 
-        using var modelContent = new StringContent(model);
-        content.Add(modelContent, "model");
+        var modelBytes = System.Text.Encoding.UTF8.GetBytes(model);
+        using var modelContent = new ByteArrayContent(modelBytes);
+        modelContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
+        {
+            Name = "\"model\""
+        };
+        content.Add(modelContent);
 
         using var request = new HttpRequestMessage(HttpMethod.Post, DefaultEndpoint);
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
         request.Headers.TryAddWithoutValidation("HTTP-Referer", "https://github.com/cisternasfelipe/voicepod");
         request.Headers.TryAddWithoutValidation("X-Title", "VoicePod");
+        request.Headers.TryAddWithoutValidation("User-Agent", "VoicePod/1.0");
         request.Content = content;
 
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);

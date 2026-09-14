@@ -14,6 +14,30 @@ public partial class MainWindow : Window
         _settings = settings;
         InitializeComponent();
         DataContext = viewModel;
+        Loaded += (_, _) => UpdateMaximizeButtonIcon();
+    }
+
+    private void OnMinimizeClick(object sender, RoutedEventArgs e) =>
+        WindowState = WindowState.Minimized;
+
+    private void OnMaximizeRestoreClick(object sender, RoutedEventArgs e) =>
+        WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+
+    private void OnCloseClick(object sender, RoutedEventArgs e) =>
+        Close();
+
+    protected override void OnStateChanged(EventArgs e)
+    {
+        base.OnStateChanged(e);
+        UpdateMaximizeButtonIcon();
+    }
+
+    private void UpdateMaximizeButtonIcon()
+    {
+        if (MaximizeIcon is not null)
+        {
+            MaximizeIcon.Text = WindowState == WindowState.Maximized ? "🗗" : "🗖";
+        }
     }
 
     /// <summary>Set by the host when the user really wants the process to end.</summary>

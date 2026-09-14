@@ -46,6 +46,19 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     private bool _isModelReady;
 
+    [ObservableProperty]
+    private bool _isCopied;
+
+    [ObservableProperty]
+    private string _engineBadge = "Nube OpenRouter";
+
+    [ObservableProperty]
+    private string _profileBadge = string.Empty;
+
+    public bool HasLastResult => !string.IsNullOrWhiteSpace(LastResult);
+
+    partial void OnLastResultChanged(string value) => OnPropertyChanged(nameof(HasLastResult));
+
     public MainViewModel(
         DictationPipeline pipeline,
         ISettingsService settings,
@@ -59,9 +72,9 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
         _pipeline.LevelChanged += OnLevelChanged;
         _pipeline.Completed += OnCompleted;
         _transcription.StateChanged += OnModelStateChanged;
-        _settings.SettingsChanged += (_, _) => Post(RefreshHotkeyText);
+        _settings.SettingsChanged += (_, _) => Post(RefreshSettingsInfo);
 
-        RefreshHotkeyText();
+        RefreshSettingsInfo();
         ApplyModelState(_transcription.State);
     }
 
@@ -84,7 +97,38 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void OpenHistory() => HistoryRequested?.Invoke(this, EventArgs.Empty);
 
+    [RelayCommand]
+    private async Task CopyLastResultAsync()
+    {
+        if (string.IsNullOrWhiteSpace(LastResult))
+        {
+            return;
+        }
+
+        try
+        {
+            Clipboard.SetText(LastResult);
+            IsCopied = true;
+            await Task.Delay(2000).ConfigureAwait(true);
+            IsCopied = false;
+        }
+        catch
+        {
+            // Ignore temporary clipboard locking by other apps
+        }
+    }
+
     public void SetHotkeyError(string? error) => Post(() => HotkeyError = error);
+
+    private void RefreshSettingsInfo()
+    {
+        RefreshHotkeyText();
+        var current = _settings.Current;
+        ProfileBadge = current.GetActiveProfile().Name;
+        EngineBadge = current.Stt.Provider == SttProvider.OpenRouterCloud
+            ? "Nube (" + (CloudSttCatalog.Models.FirstOrDefault(m => m.Id == current.Stt.CloudModel)?.DisplayName ?? "MAI-Transcribe 2") + ")"
+            : $"Local ({current.Stt.Provider})";
+    }
 
     private void RefreshHotkeyText()
     {

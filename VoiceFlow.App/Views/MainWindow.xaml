@@ -9,125 +9,326 @@
         d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
         Title="VoicePod"
         Icon="pack://application:,,,/VoiceFlow;component/Resources/voiceflow.ico"
-        Height="520"
-        Width="720"
-        MinHeight="420"
-        MinWidth="560"
+        Height="570"
+        Width="750"
+        MinHeight="460"
+        MinWidth="600"
         WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
         Background="{StaticResource BackgroundBrush}">
 
-    <Grid Margin="20">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="40"
+                      ResizeBorderThickness="6"
+                      GlassFrameThickness="0"
+                      CornerRadius="0" />
+    </WindowChrome.WindowChrome>
 
-        <!-- Header -->
-        <Grid Grid.Row="0" Margin="0,0,0,16">
-            <StackPanel HorizontalAlignment="Left">
-                <TextBlock Text="VoicePod" Style="{StaticResource HeaderText}" />
-                <TextBlock Text="{x:Static res:Strings.MainSubtitle}" Style="{StaticResource MutedText}" />
-            </StackPanel>
+    <!-- Main Window Perimeter Border (crisp outline on dark desktop backgrounds) -->
+    <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
 
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                <Button Content="{x:Static res:Strings.TrayHistory}"
-                        Margin="0,0,8,0"
-                        Padding="12,6"
-                        Command="{Binding OpenHistoryCommand}" />
-                <Button Content="{x:Static res:Strings.TraySettings}"
-                        Padding="12,6"
-                        Command="{Binding OpenSettingsCommand}" />
-            </StackPanel>
-        </Grid>
-
-        <!-- Hotkey error banner -->
-        <Border Grid.Row="1"
-                Background="#33E05A5A"
-                BorderBrush="{StaticResource DangerBrush}"
-                BorderThickness="1"
-                CornerRadius="6"
-                Padding="12,8"
-                Margin="0,0,0,12"
-                Visibility="{Binding HotkeyError, Converter={StaticResource NullToCollapsedConverter}}">
-            <TextBlock Text="{Binding HotkeyError}" Style="{StaticResource BodyText}" />
-        </Border>
-
-        <!-- Status card -->
-        <Border Grid.Row="2" Style="{StaticResource Card}" Margin="0,0,0,16">
-            <Grid>
+            <!-- Custom Title Bar (integrated dark chrome) -->
+            <Grid Grid.Row="0" Background="{StaticResource BackgroundBrush}">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <StackPanel Grid.Column="0">
-                    <TextBlock Text="{Binding StatusText}" Style="{StaticResource SectionText}" Margin="0,0,0,4" />
-                    <TextBlock Text="{Binding StateDetail}" Style="{StaticResource MutedText}" />
-
-                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                        <TextBlock Text="{x:Static res:Strings.MainHotkeyLabel}" Style="{StaticResource MutedText}" Margin="0,0,6,0" />
-                        <TextBlock Text="{Binding HotkeyText}" Style="{StaticResource BodyText}" FontWeight="SemiBold" />
-                        <TextBlock Text="  ·  " Style="{StaticResource MutedText}" />
-                        <TextBlock Text="{Binding ModeText}" Style="{StaticResource MutedText}" />
-                        <TextBlock Text="  ·  " Style="{StaticResource MutedText}" />
-                        <TextBlock Text="{Binding ModelStatusText}" Style="{StaticResource MutedText}" />
-                    </StackPanel>
-
-                    <!-- Level meter -->
-                    <Border Height="10"
-                            Margin="0,14,0,0"
-                            Background="{StaticResource SurfaceAltBrush}"
-                            CornerRadius="5"
-                            HorizontalAlignment="Stretch">
-                        <ProgressBar Minimum="0"
-                                     Maximum="1"
-                                     Value="{Binding AudioLevel, Mode=OneWay}"
-                                     Height="10"
-                                     Background="Transparent"
-                                     BorderThickness="0"
-                                     Foreground="{StaticResource SuccessBrush}" />
+                <!-- App Icon and Title -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="14,0,0,0">
+                    <Image Source="pack://application:,,,/VoiceFlow;component/Resources/voicepod-logo.png"
+                           Width="20"
+                           Height="20"
+                           Margin="0,0,8,0"
+                           RenderOptions.BitmapScalingMode="HighQuality" />
+                    <TextBlock Text="VoicePod"
+                               FontWeight="Bold"
+                               FontSize="13"
+                               Foreground="{StaticResource TextBrush}"
+                               VerticalAlignment="Center" />
+                    <Border Background="{StaticResource SurfaceAltBrush}"
+                            CornerRadius="4"
+                            Padding="6,2"
+                            Margin="8,0,0,0"
+                            VerticalAlignment="Center">
+                        <TextBlock Text="AI Voice Studio"
+                                   FontSize="10"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource AccentBrush}" />
                     </Border>
                 </StackPanel>
 
-                <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="16,0,0,0">
-                    <Button Content="{x:Static res:Strings.MainDictate}"
-                            Style="{StaticResource AccentButton}"
-                            Width="120"
-                            Command="{Binding ToggleDictationCommand}" />
-                    <Button Content="{x:Static res:Strings.Cancel}"
-                            Width="120"
-                            Margin="0,8,0,0"
-                            IsEnabled="{Binding IsRecording}"
-                            Command="{Binding CancelDictationCommand}" />
+                <!-- Draggable center area handled by WindowChrome -->
+                <Grid Grid.Column="1" Background="Transparent" />
+
+                <!-- Window Control Buttons (Minimize, Maximize/Restore, Close) -->
+                <StackPanel Grid.Column="2"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Top"
+                            WindowChrome.IsHitTestVisibleInChrome="True">
+                    <Button Style="{StaticResource WindowControlButton}"
+                            Click="OnMinimizeClick"
+                            ToolTip="Minimizar">
+                        <TextBlock Text="&#x2014;" FontSize="11" Foreground="{StaticResource MutedTextBrush}" VerticalAlignment="Center" />
+                    </Button>
+                    <Button Style="{StaticResource WindowControlButton}"
+                            Click="OnMaximizeRestoreClick"
+                            ToolTip="Maximizar / Restaurar">
+                        <TextBlock x:Name="MaximizeIcon" Text="&#x25A2;" FontSize="12" Foreground="{StaticResource MutedTextBrush}" VerticalAlignment="Center" />
+                    </Button>
+                    <Button Style="{StaticResource WindowCloseButton}"
+                            Click="OnCloseClick"
+                            ToolTip="{x:Static res:Strings.Close}">
+                        <TextBlock Text="&#x2715;" FontSize="11" Foreground="{StaticResource MutedTextBrush}" VerticalAlignment="Center" />
+                    </Button>
                 </StackPanel>
             </Grid>
-        </Border>
 
-        <!-- Result -->
-        <Border Grid.Row="3" Style="{StaticResource Card}">
-            <Grid>
+            <!-- Main Content Area -->
+            <Grid Grid.Row="1" Margin="22,10,22,20">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Text="{x:Static res:Strings.MainLastDictation}" Style="{StaticResource SectionText}" />
-                <TextBox Grid.Row="1"
-                         Text="{Binding LastResult, Mode=OneWay}"
-                         IsReadOnly="True"
-                         AcceptsReturn="True"
-                         TextWrapping="Wrap"
-                         VerticalScrollBarVisibility="Auto" />
-            </Grid>
-        </Border>
+                <!-- Header & Navigation -->
+                <Grid Grid.Row="0" Margin="0,0,0,16">
+                    <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="VoicePod" Style="{StaticResource HeaderText}" Margin="0,0,10,0" />
+                            <Border Background="#224CC38A" CornerRadius="10" Padding="8,2" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Ellipse Width="6" Height="6" Fill="{StaticResource SuccessBrush}" Margin="0,0,5,0" />
+                                    <TextBlock Text="Online" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource SuccessBrush}" />
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                        <TextBlock Text="{x:Static res:Strings.MainSubtitle}" Style="{StaticResource MutedText}" Margin="0,2,0,0" />
+                    </StackPanel>
 
-        <TextBlock Grid.Row="4"
-                   Text="{Binding LastRecordingInfo}"
-                   Style="{StaticResource MutedText}"
-                   Margin="0,12,0,0"
-                   TextTrimming="CharacterEllipsis" />
-    </Grid>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <Button Style="{StaticResource NavPillButton}"
+                                Margin="0,0,10,0"
+                                Command="{Binding OpenHistoryCommand}">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="🕒" Margin="0,0,6,0" FontSize="12" />
+                                <TextBlock Text="{x:Static res:Strings.TrayHistory}" />
+                            </StackPanel>
+                        </Button>
+                        <Button Style="{StaticResource NavPillButton}"
+                                Command="{Binding OpenSettingsCommand}">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="⚙" Margin="0,0,6,0" FontSize="12" />
+                                <TextBlock Text="{x:Static res:Strings.TraySettings}" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Hotkey error banner -->
+                <Border Grid.Row="1"
+                        Background="#33E05A5A"
+                        BorderBrush="{StaticResource DangerBrush}"
+                        BorderThickness="1"
+                        CornerRadius="6"
+                        Padding="12,8"
+                        Margin="0,0,0,12"
+                        Visibility="{Binding HotkeyError, Converter={StaticResource NullToCollapsedConverter}}">
+                    <TextBlock Text="{Binding HotkeyError}" Style="{StaticResource BodyText}" />
+                </Border>
+
+                <!-- Status & Action Card -->
+                <Border Grid.Row="2" Style="{StaticResource Card}" Margin="0,0,0,16">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Left Column: Status, Chips, Level meter -->
+                        <StackPanel Grid.Column="0">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,4">
+                                <TextBlock Text="{Binding StatusText}" Style="{StaticResource SectionText}" FontSize="16" FontWeight="Bold" Margin="0,0,8,0" />
+                            </StackPanel>
+                            <TextBlock Text="{Binding StateDetail}" Style="{StaticResource MutedText}" />
+
+                            <!-- Chips Info Row -->
+                            <WrapPanel Margin="0,12,0,0">
+                                <!-- Hotkey Chip -->
+                                <Border Background="{StaticResource SurfaceAltBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="8,4" Margin="0,0,8,6">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <TextBlock Text="⌨" FontSize="11" Foreground="{StaticResource AccentBrush}" Margin="0,0,5,0" />
+                                        <TextBlock Text="{Binding HotkeyText}" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}" />
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Mode Chip -->
+                                <Border Background="{StaticResource SurfaceAltBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="8,4" Margin="0,0,8,6">
+                                    <TextBlock Text="{Binding ModeText}" FontSize="11" Foreground="{StaticResource MutedTextBrush}" />
+                                </Border>
+
+                                <!-- STT Engine Chip -->
+                                <Border Background="{StaticResource SurfaceAltBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="8,4" Margin="0,0,8,6">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <TextBlock Text="⚡" FontSize="11" Foreground="{StaticResource AccentBrush}" Margin="0,0,5,0" />
+                                        <TextBlock Text="{Binding EngineBadge}" FontSize="11" Foreground="{StaticResource TextBrush}" />
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Profile Chip -->
+                                <Border Background="{StaticResource SurfaceAltBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="8,4" Margin="0,0,8,6">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <TextBlock Text="🎭" FontSize="11" Foreground="{StaticResource AccentBrush}" Margin="0,0,5,0" />
+                                        <TextBlock Text="{Binding ProfileBadge}" FontSize="11" Foreground="{StaticResource TextBrush}" />
+                                    </StackPanel>
+                                </Border>
+                            </WrapPanel>
+
+                            <!-- Audio VU Level meter -->
+                            <Border Height="8"
+                                    Margin="0,12,0,0"
+                                    Background="{StaticResource SurfaceAltBrush}"
+                                    CornerRadius="4"
+                                    HorizontalAlignment="Stretch">
+                                <ProgressBar Minimum="0"
+                                             Maximum="1"
+                                             Value="{Binding AudioLevel, Mode=OneWay}"
+                                             Height="8"
+                                             Background="Transparent"
+                                             BorderThickness="0"
+                                             Foreground="{StaticResource SuccessBrush}" />
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Right Column: Primary & Secondary Action Buttons -->
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="20,0,0,0">
+                            <Button Width="135"
+                                    Height="42"
+                                    Command="{Binding ToggleDictationCommand}">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource PrimaryActionButton}">
+                                        <Setter Property="Content">
+                                            <Setter.Value>
+                                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                    <TextBlock Text="🎙" Margin="0,0,8,0" FontSize="14" />
+                                                    <TextBlock Text="{x:Static res:Strings.MainDictate}" FontWeight="SemiBold" />
+                                                </StackPanel>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsRecording}" Value="True">
+                                                <Setter Property="Background">
+                                                    <Setter.Value>
+                                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                            <GradientStop Color="#FFE84F4F" Offset="0" />
+                                                            <GradientStop Color="#FFC82D2D" Offset="1" />
+                                                        </LinearGradientBrush>
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Setter Property="BorderBrush" Value="#FFFF8080" />
+                                                <Setter Property="Content">
+                                                    <Setter.Value>
+                                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <TextBlock Text="⏹" Margin="0,0,8,0" FontSize="14" />
+                                                            <TextBlock Text="Detener" FontWeight="SemiBold" />
+                                                        </StackPanel>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+
+                            <Button Style="{StaticResource SecondaryActionButton}"
+                                    Width="135"
+                                    Height="36"
+                                    Margin="0,8,0,0"
+                                    IsEnabled="{Binding IsRecording}"
+                                    Command="{Binding CancelDictationCommand}">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Text="✕" Margin="0,0,6,0" FontSize="11" />
+                                    <TextBlock Text="{x:Static res:Strings.Cancel}" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Result Card -->
+                <Border Grid.Row="3" Style="{StaticResource Card}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <!-- Card Header: Title & Copy Button -->
+                        <Grid Grid.Row="0" Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{x:Static res:Strings.MainLastDictation}" Style="{StaticResource SectionText}" VerticalAlignment="Center" Margin="0" />
+
+                            <Button Grid.Column="1"
+                                    Padding="10,4"
+                                    Visibility="{Binding HasLastResult, Converter={StaticResource BoolToVisibilityConverter}}"
+                                    Command="{Binding CopyLastResultCommand}">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource NavPillButton}">
+                                        <Setter Property="Content">
+                                            <Setter.Value>
+                                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                    <TextBlock Text="📋" FontSize="11" Margin="0,0,5,0" />
+                                                    <TextBlock Text="Copiar" FontSize="11" />
+                                                </StackPanel>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsCopied}" Value="True">
+                                                <Setter Property="Content">
+                                                    <Setter.Value>
+                                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <TextBlock Text="✓" FontSize="11" Foreground="{StaticResource SuccessBrush}" Margin="0,0,5,0" FontWeight="Bold" />
+                                                            <TextBlock Text="¡Copiado!" FontSize="11" Foreground="{StaticResource SuccessBrush}" FontWeight="SemiBold" />
+                                                        </StackPanel>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                        </Grid>
+
+                        <TextBox Grid.Row="1"
+                                 Text="{Binding LastResult, Mode=OneWay}"
+                                 IsReadOnly="True"
+                                 AcceptsReturn="True"
+                                 TextWrapping="Wrap"
+                                 FontSize="13"
+                                 VerticalScrollBarVisibility="Auto" />
+                    </Grid>
+                </Border>
+
+                <!-- Footer Metrics Bar -->
+                <TextBlock Grid.Row="4"
+                           Text="{Binding LastRecordingInfo}"
+                           Style="{StaticResource MutedText}"
+                           Margin="0,12,0,0"
+                           TextTrimming="CharacterEllipsis" />
+            </Grid>
+        </Grid>
+    </Border>
 </Window>
