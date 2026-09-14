@@ -7,7 +7,11 @@ public sealed record CloudSttModelInfo(
     string Description,
     string Pricing,
     bool IsDefault = false
-);
+)
+{
+    public string Name => DisplayName;
+    public override string ToString() => DisplayName;
+}
 
 public static class CloudSttCatalog
 {

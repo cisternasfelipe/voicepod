@@ -449,7 +449,7 @@
                                         <TextBlock Text="Motor de Reconocimiento de Voz" Style="{StaticResource SectionText}" />
                                         <ComboBox ItemsSource="{Binding SttProviderOptions}"
                                                   SelectedItem="{Binding SelectedSttProviderOption, Mode=TwoWay}"
-                                                  DisplayMemberPath="Title"
+                                                  DisplayMemberPath="DisplayName"
                                                   Margin="0,4,0,0" />
                                     </StackPanel>
                                 </Border>

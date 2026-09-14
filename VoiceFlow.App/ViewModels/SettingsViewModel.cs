@@ -931,10 +931,25 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
 }
 
 /// <summary>One entry of the interface-language combo.</summary>
-public sealed record LanguageOption(UiLanguage Value, string Display);
+public sealed record LanguageOption(UiLanguage Value, string Display)
+{
+    public string Name => Display;
+    public string DisplayName => Display;
+    public override string ToString() => Display;
+}
 
 /// <summary>One entry of the AI provider combo.</summary>
-public sealed record LlmProviderOption(LlmProviderKind Kind, string Display);
+public sealed record LlmProviderOption(LlmProviderKind Kind, string Display)
+{
+    public string Name => Display;
+    public string DisplayName => Display;
+    public override string ToString() => Display;
+}
 
 /// <summary>One entry of the STT engine provider combo.</summary>
-public sealed record SttProviderOption(SttProvider Value, string DisplayName, string Description);
+public sealed record SttProviderOption(SttProvider Value, string DisplayName, string Description)
+{
+    public string Title => DisplayName;
+    public string Name => DisplayName;
+    public override string ToString() => DisplayName;
+}

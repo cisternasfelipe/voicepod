@@ -84,7 +84,11 @@ public sealed class RecordedAudio
     }
 }
 
-public sealed record AudioDeviceInfo(string Id, string Name, bool IsDefault);
+public sealed record AudioDeviceInfo(string Id, string Name, bool IsDefault)
+{
+    public string DisplayName => Name;
+    public override string ToString() => Name;
+}
 
 public sealed class AudioLevelEventArgs : EventArgs
 {
