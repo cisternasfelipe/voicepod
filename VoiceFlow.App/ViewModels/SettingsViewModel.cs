@@ -118,6 +118,7 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
     {
         OnPropertyChanged(nameof(TemperatureDisplay));
         OnPropertyChanged(nameof(TemperatureDescription));
+        OnPropertyChanged(nameof(GlobalTemperatureText));
     }
 
     partial void OnMaxTokensChanged(int value)
@@ -601,6 +602,15 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
         }
     }
 
+    partial void OnModelChanged(string value)
+    {
+        OnPropertyChanged(nameof(GlobalModelName));
+    }
+
+    public string GlobalModelName => string.IsNullOrWhiteSpace(Model) ? "gpt-4o-mini" : Model;
+
+    public string GlobalTemperatureText => TemperatureDisplay;
+
     [RelayCommand]
     private async Task SaveProfileAsync()
     {
@@ -612,15 +622,9 @@ public sealed partial class SettingsViewModel : ObservableObject, IDisposable
         var edited = SelectedProfile.Clone();
         edited.Name = string.IsNullOrWhiteSpace(ProfileName) ? SelectedProfile.Name : ProfileName.Trim();
         edited.SystemPrompt = ProfilePrompt;
-        edited.Model = string.IsNullOrWhiteSpace(ProfileModel) ? null : ProfileModel.Trim();
+        edited.Model = null; // Inherits the global default AI model configured in the IA tab
         edited.UsesLlm = ProfileUsesLlm;
-        edited.Temperature = double.TryParse(
-            ProfileTemperature,
-            System.Globalization.NumberStyles.Float,
-            System.Globalization.CultureInfo.CurrentCulture,
-            out var temperature)
-            ? Math.Clamp(temperature, 0, 2)
-            : null;
+        edited.Temperature = null; // Inherits the global default temperature configured in the IA tab
 
         await _profiles.UpdateAsync(edited).ConfigureAwait(true);
         RefreshProfiles();

@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using System.Windows;
 using VoiceFlow.App.Resources;
 using VoiceFlow.App.Services;
@@ -20,6 +21,38 @@ public partial class SettingsWindow : Window
 
         Loaded += (_, _) => ApiKeyBox.Password = viewModel.ApiKey;
     }
+
+    protected override void OnSourceInitialized(EventArgs e)
+    {
+        base.OnSourceInitialized(e);
+        ApplyDwmRoundedCorners();
+    }
+
+    private const int DWMWA_WINDOW_CORNER_PREFERENCE = 33;
+    private const int DWMWCP_ROUND = 2;
+
+    [DllImport("dwmapi.dll", PreserveSig = true)]
+    private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
+
+    private void ApplyDwmRoundedCorners()
+    {
+        try
+        {
+            var hwnd = new System.Windows.Interop.WindowInteropHelper(this).Handle;
+            if (hwnd != IntPtr.Zero)
+            {
+                int cornerPreference = DWMWCP_ROUND;
+                DwmSetWindowAttribute(hwnd, DWMWA_WINDOW_CORNER_PREFERENCE, ref cornerPreference, sizeof(int));
+            }
+        }
+        catch
+        {
+            // Gracefully ignore on older Windows versions
+        }
+    }
+
+    private void OnMinimizeClick(object sender, RoutedEventArgs e) =>
+        WindowState = WindowState.Minimized;
 
     private void OnRecordHotkeyClick(object sender, RoutedEventArgs e)
     {

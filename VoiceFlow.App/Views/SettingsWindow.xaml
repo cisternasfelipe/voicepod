@@ -5,591 +5,867 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:VoiceFlow.App.ViewModels"
         xmlns:res="clr-namespace:VoiceFlow.App.Resources"
+        xmlns:iconPacks="clr-namespace:MahApps.Metro.IconPacks;assembly=MahApps.Metro.IconPacks.Lucide"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=vm:SettingsViewModel}"
-        Title="{x:Static res:Strings.SettingsTitle}"
+        Title="Ajustes · VoicePod"
         Icon="pack://application:,,,/VoiceFlow;component/Resources/voiceflow.ico"
-        Height="620"
-        Width="780"
-        MinHeight="520"
-        MinWidth="700"
+        Height="680"
+        Width="920"
+        MinHeight="580"
+        MinWidth="820"
         WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
         Background="{StaticResource BackgroundBrush}">
 
-    <Grid Margin="16">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="40"
+                      ResizeBorderThickness="6"
+                      GlassFrameThickness="0"
+                      CornerRadius="14" />
+    </WindowChrome.WindowChrome>
 
-        <TabControl Grid.Row="0"
-                    Background="{StaticResource SurfaceBrush}"
-                    BorderBrush="{StaticResource BorderBrush}">
+    <Window.Resources>
+        <!-- Modern Sidebar TabItem Style -->
+        <Style x:Key="SidebarTabItemStyle" TargetType="TabItem">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{StaticResource MutedTextBrush}" />
+            <Setter Property="Margin" Value="0,2" />
+            <Setter Property="Padding" Value="14,10" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Focusable" Value="False" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabItem">
+                        <Border x:Name="TabBorder"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="10"
+                                BorderThickness="2.3"
+                                BorderBrush="Transparent"
+                                Margin="4,2"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter ContentSource="Header" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="TabBorder" Property="Background" Value="{StaticResource SurfaceAltBrush}" />
+                                <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="TabBorder" Property="Background" Value="#FF272E3D" />
+                                <Setter TargetName="TabBorder" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                <Setter Property="Foreground" Value="White" />
+                                <Setter Property="FontWeight" Value="SemiBold" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
 
-            <!-- General -->
-            <TabItem Header="{x:Static res:Strings.TabGeneral}">
-                <StackPanel Margin="16">
-                    <CheckBox Content="{x:Static res:Strings.SettingsStartWithWindows}" IsChecked="{Binding StartWithWindows}" />
-                    <CheckBox Content="{x:Static res:Strings.SettingsMinimizeToTray}" IsChecked="{Binding MinimizeToTrayOnClose}" />
-                    <CheckBox Content="{x:Static res:Strings.SettingsPlaySounds}" IsChecked="{Binding PlaySounds}" />
+    <!-- Outer Window Perimeter with 2.3px Linea border -->
+    <Border x:Name="WindowBorder"
+            BorderBrush="{StaticResource LineaBrush}"
+            BorderThickness="2.3"
+            CornerRadius="14"
+            Background="{StaticResource BackgroundBrush}"
+            ClipToBounds="True"
+            SnapsToDevicePixels="True"
+            UseLayoutRounding="True">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
-                    <TextBlock Text="{x:Static res:Strings.SettingsLanguage}" Style="{StaticResource SectionText}" Margin="0,16,0,6" />
-                    <ComboBox Width="220"
-                              HorizontalAlignment="Left"
-                              ItemsSource="{Binding Languages}"
-                              DisplayMemberPath="Display"
-                              SelectedItem="{Binding SelectedLanguage}" />
-                    <TextBlock Text="{x:Static res:Strings.SettingsLanguageHint}"
-                               Style="{StaticResource MutedText}"
-                               Margin="0,6,0,0" />
+            <!-- Custom Integrated Title Bar -->
+            <Grid Grid.Row="0" Background="{StaticResource BackgroundBrush}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
 
-                    <TextBlock Text="{x:Static res:Strings.SettingsPasteSection}" Style="{StaticResource SectionText}" Margin="0,20,0,6" />
-                    <CheckBox Content="{x:Static res:Strings.SettingsRestoreClipboard}" IsChecked="{Binding RestoreClipboard}" />
-                    <CheckBox Content="{x:Static res:Strings.SettingsTypeUnicode}"
-                              IsChecked="{Binding TypeCharacterByCharacter}" />
-                    <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
-                        <TextBlock Text="{x:Static res:Strings.SettingsPasteDelay}" Style="{StaticResource BodyText}" VerticalAlignment="Center" />
-                        <TextBox Width="80" Margin="8,0,0,0" Text="{Binding PasteDelayMilliseconds}" />
-                    </StackPanel>
+                <!-- App Icon & Window Title -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="14,0,0,0">
+                    <Image Source="pack://application:,,,/VoiceFlow;component/Resources/voicepod-logo.png"
+                           Width="18"
+                           Height="18"
+                           Margin="0,0,8,0"
+                           RenderOptions.BitmapScalingMode="HighQuality" />
+                    <TextBlock Text="VoicePod"
+                               FontWeight="Bold"
+                               FontSize="13"
+                               Foreground="{StaticResource TextBrush}"
+                               VerticalAlignment="Center" />
+                    <Border Background="{StaticResource SurfaceAltBrush}"
+                            BorderBrush="{StaticResource LineaBrush}"
+                            BorderThickness="1.5"
+                            CornerRadius="6"
+                            Padding="6,2"
+                            Margin="8,0,0,0"
+                            VerticalAlignment="Center">
+                        <TextBlock Text="Ajustes"
+                                   FontSize="10"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource AccentBrush}" />
+                    </Border>
                 </StackPanel>
-            </TabItem>
 
-            <!-- Hotkey -->
-            <TabItem Header="{x:Static res:Strings.TabHotkey}">
-                <StackPanel Margin="16">
-                    <TextBlock Text="{x:Static res:Strings.SettingsHotkeyCombination}" Style="{StaticResource SectionText}" />
-                    <TextBlock Text="{x:Static res:Strings.SettingsHotkeyHint}"
-                               Style="{StaticResource MutedText}"
-                               Margin="0,0,0,8" />
+                <!-- Draggable center area -->
+                <Grid Grid.Column="1" Background="Transparent" />
 
-                    <StackPanel Orientation="Horizontal">
-                        <TextBox x:Name="HotkeyBox"
-                                 Width="240"
-                                 VerticalAlignment="Center"
-                                 IsReadOnly="True"
-                                 Text="{Binding HotkeyText, Mode=OneWay}"
-                                 ToolTip="{x:Static res:Strings.SettingsHotkeyHint}" />
-
-                        <Button x:Name="RecordHotkeyButton"
-                                Content="{x:Static res:Strings.SettingsHotkeyRecord}"
-                                VerticalAlignment="Center"
-                                Margin="10,0,0,0"
-                                Padding="12,6"
-                                Click="OnRecordHotkeyClick" />
-
-                        <Button Content="{x:Static res:Strings.SettingsHotkeyReset}"
-                                VerticalAlignment="Center"
-                                Margin="10,0,0,0"
-                                Padding="12,6"
-                                Command="{Binding ResetHotkeyCommand}" />
-                    </StackPanel>
-
-                    <TextBlock x:Name="RecordingStatusText"
-                               Text="{x:Static res:Strings.SettingsHotkeyListening}"
-                               Foreground="{StaticResource AccentBrush}"
-                               FontWeight="SemiBold"
-                               Margin="0,8,0,0"
-                               Visibility="Collapsed" />
-
-                    <TextBlock Text="{Binding HotkeyMessage}"
-                               Style="{StaticResource MutedText}"
-                               Foreground="{StaticResource DangerBrush}"
-                               Margin="0,10,0,0"
-                               Visibility="{Binding HotkeyMessage, Converter={StaticResource NullToCollapsedConverter}}" />
-
-                    <TextBlock Text="{x:Static res:Strings.SettingsHotkeyMode}" Style="{StaticResource SectionText}" Margin="0,22,0,6" />
-                    <RadioButton Content="{x:Static res:Strings.SettingsHotkeyToggleOption}"
-                                 IsChecked="{Binding IsPushToTalk, Converter={StaticResource InverseBooleanConverter}}" />
-                    <RadioButton Content="{x:Static res:Strings.SettingsHotkeyHoldOption}"
-                                 IsChecked="{Binding IsPushToTalk}" />
+                <!-- Window Control Buttons -->
+                <StackPanel Grid.Column="2"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Margin="0,0,6,0"
+                            WindowChrome.IsHitTestVisibleInChrome="True">
+                    <Button Style="{StaticResource WindowControlButton}"
+                            Click="OnMinimizeClick"
+                            ToolTip="Minimizar">
+                        <iconPacks:PackIconLucide Kind="Minus" Width="11" Height="11" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Button>
+                    <Button Style="{StaticResource WindowCloseButton}"
+                            Click="OnCloseClick"
+                            ToolTip="{x:Static res:Strings.Close}">
+                        <iconPacks:PackIconLucide Kind="X" Width="11" Height="11" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Button>
                 </StackPanel>
-            </TabItem>
+            </Grid>
 
-            <!-- Audio -->
-            <TabItem Header="{x:Static res:Strings.TabAudio}">
-                <StackPanel Margin="16">
-                    <TextBlock Text="{x:Static res:Strings.SettingsInputDevice}" Style="{StaticResource SectionText}" />
-                    <ComboBox ItemsSource="{Binding Devices}"
-                              SelectedItem="{Binding SelectedDevice}"
-                              DisplayMemberPath="Name" />
+            <!-- Main Content Area: Sidebar Navigation + Settings Pages -->
+            <Grid Grid.Row="1">
+                <TabControl TabStripPlacement="Left"
+                            Background="{StaticResource BackgroundBrush}"
+                            BorderThickness="0"
+                            Padding="0">
+                    <TabControl.Template>
+                        <ControlTemplate TargetType="TabControl">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="220" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
 
-                    <TextBlock Text="{x:Static res:Strings.SettingsMicTest}" Style="{StaticResource SectionText}" Margin="0,20,0,6" />
-                    <StackPanel Orientation="Horizontal">
-                        <Button Width="120" Command="{Binding ToggleMicTestCommand}">
-                            <Button.Style>
-                                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-                                    <Setter Property="Content" Value="{x:Static res:Strings.SettingsMicTestStart}" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsMicTestRunning}" Value="True">
-                                            <Setter Property="Content" Value="{x:Static res:Strings.SettingsMicTestStop}" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Button.Style>
-                        </Button>
-                        <ProgressBar Width="320"
-                                     Height="12"
-                                     Margin="12,0,0,0"
-                                     Minimum="0"
-                                     Maximum="1"
-                                     Value="{Binding MicLevel, Mode=OneWay}"
-                                     Background="{StaticResource SurfaceAltBrush}"
-                                     BorderThickness="0"
-                                     Foreground="{StaticResource SuccessBrush}" />
-                    </StackPanel>
+                                <!-- Left Sidebar -->
+                                <Border Grid.Column="0"
+                                        Background="{StaticResource SurfaceBrush}"
+                                        BorderThickness="0,0,2.3,0"
+                                        BorderBrush="{StaticResource LineaBrush}">
+                                    <Grid Margin="10,14">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
 
-                    <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
-                        <TextBlock Text="{x:Static res:Strings.SettingsMaxDuration}" Style="{StaticResource BodyText}" VerticalAlignment="Center" />
-                        <TextBox Width="80" Margin="8,0,0,0" Text="{Binding MaxRecordingSeconds}" />
-                    </StackPanel>
-                </StackPanel>
-            </TabItem>
+                                        <TextBlock Grid.Row="0"
+                                                   Text="CONFIGURACIÓN"
+                                                   FontSize="11"
+                                                   FontWeight="Bold"
+                                                   Foreground="{StaticResource MutedTextBrush}"
+                                                   Margin="10,0,0,10" />
 
-            <!-- Transcription -->
-            <TabItem Header="{x:Static res:Strings.TabTranscription}">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                    <StackPanel Margin="16">
-                        <!-- Mode / Provider selector -->
-                        <TextBlock Text="Motor de reconocimiento de voz" Style="{StaticResource SectionText}" />
-                        <ComboBox HorizontalAlignment="Left"
-                                  Width="420"
-                                  ItemsSource="{Binding SttProviderOptions}"
-                                  SelectedItem="{Binding SelectedSttProviderOption}">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel Margin="2,4">
-                                        <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}" />
-                                        <TextBlock Text="{Binding Description}" Style="{StaticResource MutedText}" FontSize="11" />
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
+                                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                            <StackPanel IsItemsHost="True" />
+                                        </ScrollViewer>
+                                    </Grid>
+                                </Border>
 
-                        <!-- Cloud STT Section -->
-                        <Border Style="{StaticResource Card}"
-                                Margin="0,16,0,0"
-                                Visibility="{Binding IsCloudStt, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <!-- Right Content Area -->
+                                <Border Grid.Column="1" Background="{StaticResource BackgroundBrush}" Padding="24,18">
+                                    <ContentPresenter ContentSource="SelectedContent" />
+                                </Border>
+                            </Grid>
+                        </ControlTemplate>
+                    </TabControl.Template>
+
+                    <!-- TAB 1: GENERAL -->
+                    <TabItem Style="{StaticResource SidebarTabItemStyle}">
+                        <TabItem.Header>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <iconPacks:PackIconLucide Kind="Sliders" Width="15" Height="15" Margin="0,0,10,0" VerticalAlignment="Center" />
+                                <TextBlock Text="{x:Static res:Strings.TabGeneral}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </TabItem.Header>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                             <StackPanel>
-                                <TextBlock Text="Modelo en la Nube (OpenRouter STT)" Style="{StaticResource SectionText}" />
-                                <TextBlock Text="Elige el modelo en la nube para procesar tu voz en tiempo récord y con máxima precisión." Style="{StaticResource MutedText}" Margin="0,0,0,10" />
+                                <TextBlock Text="{x:Static res:Strings.TabGeneral}" Style="{StaticResource HeaderText}" Margin="0,0,0,4" />
+                                <TextBlock Text="Preferencias de arranque, idioma de la interfaz y comportamiento del pegado." Style="{StaticResource MutedText}" Margin="0,0,0,16" />
 
-                                <ComboBox ItemsSource="{Binding CloudModels}"
-                                          SelectedItem="{Binding SelectedCloudModel}"
-                                          HorizontalAlignment="Stretch">
-                                    <ComboBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <Grid Margin="0,2">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="Auto" />
-                                                </Grid.ColumnDefinitions>
-                                                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                                                    <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}" />
-                                                    <TextBlock Text=" · " Foreground="{StaticResource MutedTextBrush}" />
-                                                    <TextBlock Text="{Binding Provider}" Foreground="{StaticResource MutedTextBrush}" />
-                                                </StackPanel>
-                                                <Border Grid.Column="1" Background="{StaticResource SurfaceAltBrush}" CornerRadius="4" Padding="6,2" Margin="12,0,4,0">
-                                                    <TextBlock Text="{Binding Pricing}" FontSize="11" Foreground="{StaticResource AccentBrush}" FontWeight="SemiBold" />
+                                <!-- Sistema Card -->
+                                <Border Style="{StaticResource Card}" Margin="0,0,0,14">
+                                    <StackPanel>
+                                        <TextBlock Text="Sistema y Ventana" Style="{StaticResource SectionText}" />
+                                        <CheckBox Content="{x:Static res:Strings.SettingsStartWithWindows}" IsChecked="{Binding StartWithWindows}" Margin="0,4" />
+                                        <CheckBox Content="{x:Static res:Strings.SettingsMinimizeToTray}" IsChecked="{Binding MinimizeToTrayOnClose}" Margin="0,4" />
+                                        <CheckBox Content="{x:Static res:Strings.SettingsPlaySounds}" IsChecked="{Binding PlaySounds}" Margin="0,4" />
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Idioma Card -->
+                                <Border Style="{StaticResource Card}" Margin="0,0,0,14">
+                                    <StackPanel>
+                                        <TextBlock Text="{x:Static res:Strings.SettingsLanguage}" Style="{StaticResource SectionText}" />
+                                        <ComboBox Width="240"
+                                                  HorizontalAlignment="Left"
+                                                  ItemsSource="{Binding Languages}"
+                                                  DisplayMemberPath="Display"
+                                                  SelectedItem="{Binding SelectedLanguage}" />
+                                        <TextBlock Text="{x:Static res:Strings.SettingsLanguageHint}" Style="{StaticResource MutedText}" Margin="0,6,0,0" />
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Pegado Card -->
+                                <Border Style="{StaticResource Card}">
+                                    <StackPanel>
+                                        <TextBlock Text="{x:Static res:Strings.SettingsPasteSection}" Style="{StaticResource SectionText}" />
+                                        <CheckBox Content="{x:Static res:Strings.SettingsRestoreClipboard}" IsChecked="{Binding RestoreClipboard}" Margin="0,4" />
+                                        <CheckBox Content="{x:Static res:Strings.SettingsTypeUnicode}" IsChecked="{Binding TypeCharacterByCharacter}" Margin="0,4" />
+                                        <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                            <TextBlock Text="{x:Static res:Strings.SettingsPasteDelay}" Style="{StaticResource BodyText}" VerticalAlignment="Center" />
+                                            <TextBox Width="80" Margin="8,0,0,0" Text="{Binding PasteDelayMilliseconds}" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+
+                    <!-- TAB 2: HOTKEY -->
+                    <TabItem Style="{StaticResource SidebarTabItemStyle}">
+                        <TabItem.Header>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <iconPacks:PackIconLucide Kind="Keyboard" Width="15" Height="15" Margin="0,0,10,0" VerticalAlignment="Center" />
+                                <TextBlock Text="{x:Static res:Strings.TabHotkey}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </TabItem.Header>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                            <StackPanel>
+                                <TextBlock Text="{x:Static res:Strings.TabHotkey}" Style="{StaticResource HeaderText}" Margin="0,0,0,4" />
+                                <TextBlock Text="Define la combinación de teclas para activar la grabación en cualquier aplicación." Style="{StaticResource MutedText}" Margin="0,0,0,16" />
+
+                                <Border Style="{StaticResource Card}" Margin="0,0,0,14">
+                                    <StackPanel>
+                                        <TextBlock Text="{x:Static res:Strings.SettingsHotkeyCombination}" Style="{StaticResource SectionText}" />
+                                        <TextBlock Text="{x:Static res:Strings.SettingsHotkeyHint}" Style="{StaticResource MutedText}" Margin="0,0,0,10" />
+
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBox x:Name="HotkeyBox"
+                                                     Width="260"
+                                                     VerticalAlignment="Center"
+                                                     IsReadOnly="True"
+                                                     FontWeight="SemiBold"
+                                                     Text="{Binding HotkeyText, Mode=OneWay}"
+                                                     ToolTip="{x:Static res:Strings.SettingsHotkeyHint}" />
+
+                                            <Button x:Name="RecordHotkeyButton"
+                                                    Content="{x:Static res:Strings.SettingsHotkeyRecord}"
+                                                    VerticalAlignment="Center"
+                                                    Margin="10,0,0,0"
+                                                    Padding="14,8"
+                                                    Click="OnRecordHotkeyClick" />
+
+                                            <Button Content="{x:Static res:Strings.SettingsHotkeyReset}"
+                                                    VerticalAlignment="Center"
+                                                    Margin="10,0,0,0"
+                                                    Padding="14,8"
+                                                    Command="{Binding ResetHotkeyCommand}" />
+                                        </StackPanel>
+
+                                        <TextBlock x:Name="RecordingStatusText"
+                                                   Text="{x:Static res:Strings.SettingsHotkeyListening}"
+                                                   Foreground="{StaticResource AccentBrush}"
+                                                   FontWeight="SemiBold"
+                                                   Margin="0,10,0,0"
+                                                   Visibility="Collapsed" />
+
+                                        <TextBlock Text="{Binding HotkeyMessage}"
+                                                   Style="{StaticResource MutedText}"
+                                                   Foreground="{StaticResource DangerBrush}"
+                                                   Margin="0,10,0,0"
+                                                   Visibility="{Binding HotkeyMessage, Converter={StaticResource NullToCollapsedConverter}}" />
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Style="{StaticResource Card}">
+                                    <StackPanel>
+                                        <TextBlock Text="{x:Static res:Strings.SettingsHotkeyMode}" Style="{StaticResource SectionText}" />
+                                        <RadioButton Content="{x:Static res:Strings.SettingsHotkeyToggleOption}"
+                                                     IsChecked="{Binding IsPushToTalk, Converter={StaticResource InverseBooleanConverter}}"
+                                                     Margin="0,4" />
+                                        <RadioButton Content="{x:Static res:Strings.SettingsHotkeyHoldOption}"
+                                                     IsChecked="{Binding IsPushToTalk}"
+                                                     Margin="0,4" />
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+
+                    <!-- TAB 3: AUDIO -->
+                    <TabItem Style="{StaticResource SidebarTabItemStyle}">
+                        <TabItem.Header>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <iconPacks:PackIconLucide Kind="Mic" Width="15" Height="15" Margin="0,0,10,0" VerticalAlignment="Center" />
+                                <TextBlock Text="{x:Static res:Strings.TabAudio}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </TabItem.Header>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                            <StackPanel>
+                                <TextBlock Text="{x:Static res:Strings.TabAudio}" Style="{StaticResource HeaderText}" Margin="0,0,0,4" />
+                                <TextBlock Text="Selecciona el micrófono de captura y verifica la señal de audio." Style="{StaticResource MutedText}" Margin="0,0,0,16" />
+
+                                <Border Style="{StaticResource Card}" Margin="0,0,0,14">
+                                    <StackPanel>
+                                        <TextBlock Text="{x:Static res:Strings.SettingsInputDevice}" Style="{StaticResource SectionText}" />
+                                        <ComboBox ItemsSource="{Binding Devices}"
+                                                  SelectedItem="{Binding SelectedDevice}"
+                                                  DisplayMemberPath="Name" />
+
+                                        <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
+                                            <TextBlock Text="{x:Static res:Strings.SettingsMaxDuration}" Style="{StaticResource BodyText}" VerticalAlignment="Center" />
+                                            <TextBox Width="70" Margin="8,0,0,0" Text="{Binding MaxRecordingSeconds}" />
+                                            <TextBlock Text="segundos" Style="{StaticResource MutedText}" VerticalAlignment="Center" Margin="6,0,0,0" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Style="{StaticResource Card}">
+                                    <StackPanel>
+                                        <TextBlock Text="{x:Static res:Strings.SettingsMicTest}" Style="{StaticResource SectionText}" />
+                                        <StackPanel Orientation="Horizontal" Margin="0,4,0,12">
+                                            <Button Width="150" Height="36" Command="{Binding ToggleMicTestCommand}">
+                                                <Button.Style>
+                                                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                                        <Setter Property="Content" Value="{x:Static res:Strings.SettingsMicTestStart}" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsMicTestRunning}" Value="True">
+                                                                <Setter Property="Content" Value="{x:Static res:Strings.SettingsMicTestStop}" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
+                                            </Button>
+                                        </StackPanel>
+
+                                        <Border Height="10"
+                                                Background="{StaticResource SurfaceAltBrush}"
+                                                BorderBrush="{StaticResource LineaBrush}"
+                                                BorderThickness="1.5"
+                                                CornerRadius="6"
+                                                HorizontalAlignment="Stretch"
+                                                ClipToBounds="True">
+                                            <ProgressBar Minimum="0"
+                                                         Maximum="1"
+                                                         Value="{Binding MicLevel, Mode=OneWay}"
+                                                         Height="10"
+                                                         Background="Transparent"
+                                                         BorderThickness="0"
+                                                         Foreground="{StaticResource SuccessBrush}" />
+                                        </Border>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+
+                    <!-- TAB 4: TRANSCRIPTION (STT) -->
+                    <TabItem Style="{StaticResource SidebarTabItemStyle}">
+                        <TabItem.Header>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <iconPacks:PackIconLucide Kind="Radio" Width="15" Height="15" Margin="0,0,10,0" VerticalAlignment="Center" />
+                                <TextBlock Text="{x:Static res:Strings.TabTranscription}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </TabItem.Header>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                            <StackPanel>
+                                <TextBlock Text="{x:Static res:Strings.TabTranscription}" Style="{StaticResource HeaderText}" Margin="0,0,0,4" />
+                                <TextBlock Text="Elige entre transcripción ultrarrápida en la nube (OpenRouter) o modelos locales sin conexión." Style="{StaticResource MutedText}" Margin="0,0,0,16" />
+
+                                <Border Style="{StaticResource Card}" Margin="0,0,0,14">
+                                    <StackPanel>
+                                        <TextBlock Text="Motor de Reconocimiento de Voz" Style="{StaticResource SectionText}" />
+                                        <ComboBox ItemsSource="{Binding SttProviderOptions}"
+                                                  SelectedItem="{Binding SelectedSttProviderOption, Mode=TwoWay}"
+                                                  DisplayMemberPath="Title"
+                                                  Margin="0,4,0,0" />
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Cloud OpenRouter STT Section -->
+                                <Border Style="{StaticResource Card}"
+                                        Margin="0,0,0,14"
+                                        Visibility="{Binding IsCloudStt, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <StackPanel>
+                                        <TextBlock Text="Modelos de Voz en la Nube (OpenRouter)" Style="{StaticResource SectionText}" />
+                                        <TextBlock Text="Selecciona el modelo de transcripción de voz que procesará tus audios en tiempo real." Style="{StaticResource MutedText}" Margin="0,0,0,10" />
+
+                                        <ComboBox ItemsSource="{Binding CloudModels}"
+                                                  SelectedItem="{Binding SelectedCloudModel, Mode=TwoWay}"
+                                                  DisplayMemberPath="DisplayName" />
+
+                                        <Border Background="#1C283F"
+                                                BorderBrush="{StaticResource AccentBrush}"
+                                                BorderThickness="1.5"
+                                                CornerRadius="8"
+                                                Padding="12,8"
+                                                Margin="0,12,0,0"
+                                                Visibility="{Binding HasApiKeyForCloudStt, Converter={StaticResource InverseBooleanConverter}}">
+                                            <TextBlock Text="⚠ Recuerda configurar tu API Key de OpenRouter en la pestaña 'Inteligencia Artificial' para utilizar los modelos en la nube."
+                                                       Foreground="{StaticResource AccentBrush}"
+                                                       FontSize="11" />
+                                        </Border>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Local STT Section -->
+                                <Border Style="{StaticResource Card}"
+                                        Margin="0,0,0,14"
+                                        Visibility="{Binding IsLocalStt, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <StackPanel>
+                                        <TextBlock Text="{x:Static res:Strings.SettingsModelFolder}" Style="{StaticResource SectionText}" />
+                                        <Grid Margin="0,4,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBox Grid.Column="0" Text="{Binding ModelDirectory}" />
+                                            <Button Grid.Column="1" Content="{x:Static res:Strings.Browse}" Margin="8,0,0,0" Command="{Binding BrowseModelDirectoryCommand}" />
+                                        </Grid>
+
+                                        <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
+                                            <TextBlock Text="{x:Static res:Strings.SettingsThreads}" Style="{StaticResource BodyText}" VerticalAlignment="Center" />
+                                            <TextBox Width="60" Margin="8,0,0,0" Text="{Binding NumThreads}" />
+                                            <Button Content="{x:Static res:Strings.SettingsDownloadModel}" Margin="16,0,0,0" Command="{Binding DownloadModelCommand}" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Status & Reload -->
+                                <Border Style="{StaticResource Card}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <TextBlock Text="{x:Static res:Strings.SettingsStatus}" Style="{StaticResource BodyText}" VerticalAlignment="Center" />
+                                            <TextBlock Text="{Binding ModelStatus}"
+                                                       Style="{StaticResource BodyText}"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="{StaticResource AccentBrush}"
+                                                       Margin="8,0,0,0"
+                                                       VerticalAlignment="Center" />
+                                        </StackPanel>
+                                        <Button Grid.Column="1" Content="{x:Static res:Strings.SettingsReloadModel}" Command="{Binding ReloadModelCommand}" />
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+
+                    <!-- TAB 5: ARTIFICIAL INTELLIGENCE (LLM) -->
+                    <TabItem Style="{StaticResource SidebarTabItemStyle}">
+                        <TabItem.Header>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <iconPacks:PackIconLucide Kind="Sparkles" Width="15" Height="15" Margin="0,0,10,0" VerticalAlignment="Center" />
+                                <TextBlock Text="{x:Static res:Strings.TabAi}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </TabItem.Header>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                            <StackPanel>
+                                <TextBlock Text="{x:Static res:Strings.TabAi}" Style="{StaticResource HeaderText}" Margin="0,0,0,4" />
+                                <TextBlock Text="Configuración central del modelo de lenguaje que refina, corrige y da formato a tus dictados." Style="{StaticResource MutedText}" Margin="0,0,0,16" />
+
+                                <!-- Provider & Endpoint Card -->
+                                <Border Style="{StaticResource Card}" Margin="0,0,0,14">
+                                    <StackPanel>
+                                        <TextBlock Text="{x:Static res:Strings.SettingsProviderLabel}" Style="{StaticResource SectionText}" />
+                                        <ComboBox Width="240"
+                                                  HorizontalAlignment="Left"
+                                                  ItemsSource="{Binding LlmProviderOptions}"
+                                                  DisplayMemberPath="Display"
+                                                  SelectedItem="{Binding SelectedLlmProvider}" />
+
+                                        <TextBlock Text="{x:Static res:Strings.SettingsEndpoint}" Style="{StaticResource SectionText}" Margin="0,16,0,0" />
+                                        <TextBox Text="{Binding BaseUrl, UpdateSourceTrigger=PropertyChanged, Delay=300}" Margin="0,4,0,0" />
+                                        <TextBlock Text="{x:Static res:Strings.SettingsEndpointExamples}" Style="{StaticResource MutedText}" Margin="0,4,0,0" />
+
+                                        <!-- API Key -->
+                                        <TextBlock Text="{x:Static res:Strings.SettingsApiKey}" Style="{StaticResource SectionText}" Margin="0,16,0,0" />
+                                        <Grid Margin="0,4,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <PasswordBox x:Name="ApiKeyBox"
+                                                         Grid.Column="0"
+                                                         Background="{StaticResource SurfaceAltBrush}"
+                                                         Foreground="{StaticResource TextBrush}"
+                                                         BorderBrush="{StaticResource LineaBrush}"
+                                                         BorderThickness="2.3"
+                                                         Padding="10,8"
+                                                         PasswordChanged="OnApiKeyChanged" />
+                                            <Button Grid.Column="1"
+                                                    Content="{x:Static res:Strings.SettingsGetApiKey}"
+                                                    Margin="8,0,0,0"
+                                                    Command="{Binding OpenApiKeyPageCommand}"
+                                                    Visibility="{Binding HasApiKeyUrl, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Model Selection Card -->
+                                <Border Style="{StaticResource Card}" Margin="0,0,0,14">
+                                    <StackPanel>
+                                        <TextBlock Text="Modelo de IA por Defecto" Style="{StaticResource SectionText}" />
+                                        <TextBlock Text="Este modelo es el motor global utilizado por todos los perfiles de post-procesamiento." Style="{StaticResource MutedText}" Margin="0,0,0,8" />
+
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBox Grid.Column="0" Text="{Binding Model, UpdateSourceTrigger=PropertyChanged}" FontWeight="SemiBold" />
+                                            <Button Grid.Column="1"
+                                                    Content="{x:Static res:Strings.SettingsBrowseModels}"
+                                                    Margin="8,0,0,0"
+                                                    Command="{Binding BrowseModelsCommand}" />
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Parameters: Temperature & Tokens -->
+                                <Border Style="{StaticResource Card}" Margin="0,0,0,14">
+                                    <StackPanel>
+                                        <!-- Temperature Section -->
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                                <TextBlock Text="{x:Static res:Strings.SettingsTemperature}" Style="{StaticResource SectionText}" Margin="0,0,8,0" />
+                                                <Border Background="{StaticResource SurfaceAltBrush}" BorderBrush="{StaticResource LineaBrush}" BorderThickness="1.5" CornerRadius="6" Padding="6,2" VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding TemperatureDisplay}" Foreground="{StaticResource AccentBrush}" FontWeight="Bold" FontSize="12" />
                                                 </Border>
-                                            </Grid>
-                                        </DataTemplate>
-                                    </ComboBox.ItemTemplate>
-                                </ComboBox>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                                <Button Content="{x:Static res:Strings.SettingsTemperaturePrecise}" Padding="8,4" Margin="0,0,4,0" FontSize="11" Command="{Binding SetTemperaturePresetCommand}" CommandParameter="0.1" />
+                                                <Button Content="{x:Static res:Strings.SettingsTemperatureBalanced}" Padding="8,4" Margin="0,0,4,0" FontSize="11" Command="{Binding SetTemperaturePresetCommand}" CommandParameter="0.3" />
+                                                <Button Content="{x:Static res:Strings.SettingsTemperatureCreative}" Padding="8,4" FontSize="11" Command="{Binding SetTemperaturePresetCommand}" CommandParameter="0.7" />
+                                            </StackPanel>
+                                        </Grid>
+                                        <Slider Minimum="0.0" Maximum="1.5" SmallChange="0.05" LargeChange="0.1" Value="{Binding Temperature, UpdateSourceTrigger=PropertyChanged}" Margin="0,10,0,4" />
+                                        <TextBlock Text="{Binding TemperatureDescription}" Style="{StaticResource MutedText}" Margin="0,0,0,14" />
 
-                                <!-- Details Card for Selected Model -->
-                                <Border Background="{StaticResource SurfaceAltBrush}" CornerRadius="6" Padding="12" Margin="0,12,0,0">
+                                        <Separator Background="{StaticResource LineaBrush}" Margin="0,0,0,14" />
+
+                                        <!-- Max Tokens Section -->
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                                <TextBlock Text="{x:Static res:Strings.SettingsMaxTokens}" Style="{StaticResource SectionText}" Margin="0,0,8,0" />
+                                                <Border Background="{StaticResource SurfaceAltBrush}" BorderBrush="{StaticResource LineaBrush}" BorderThickness="1.5" CornerRadius="6" Padding="6,2" VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding MaxTokens}" Foreground="{StaticResource AccentBrush}" FontWeight="Bold" FontSize="12" />
+                                                </Border>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                                <Button Content="{x:Static res:Strings.SettingsTokensShort}" Padding="8,4" Margin="0,0,4,0" FontSize="11" Command="{Binding SetMaxTokensPresetCommand}" CommandParameter="512" />
+                                                <Button Content="{x:Static res:Strings.SettingsTokensStandard}" Padding="8,4" Margin="0,0,4,0" FontSize="11" Command="{Binding SetMaxTokensPresetCommand}" CommandParameter="1024" />
+                                                <Button Content="{x:Static res:Strings.SettingsTokensLong}" Padding="8,4" FontSize="11" Command="{Binding SetMaxTokensPresetCommand}" CommandParameter="2048" />
+                                            </StackPanel>
+                                        </Grid>
+                                        <Slider Minimum="256" Maximum="4096" SmallChange="128" LargeChange="512" Value="{Binding MaxTokens, UpdateSourceTrigger=PropertyChanged}" Margin="0,10,0,4" />
+                                        <TextBlock Text="{Binding MaxTokensDescription}" Style="{StaticResource MutedText}" />
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Reasoning / Thinking Card -->
+                                <Border Style="{StaticResource Card}" Margin="0,0,0,14">
                                     <StackPanel>
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
-                                            <TextBlock Text="{Binding SelectedCloudModel.Id}"
-                                                       Foreground="{StaticResource AccentBrush}"
-                                                       FontWeight="SemiBold"
-                                                       FontSize="12" />
-                                            <TextBlock Grid.Column="1"
-                                                       Text="{Binding SelectedCloudModel.Pricing}"
-                                                       Foreground="{StaticResource SuccessBrush}"
-                                                       FontWeight="SemiBold"
-                                                       FontSize="12" />
+                                            <StackPanel Grid.Column="0">
+                                                <TextBlock Text="{x:Static res:Strings.SettingsReasoningTitle}" Style="{StaticResource SectionText}" Margin="0,0,0,2" />
+                                                <TextBlock Text="{x:Static res:Strings.SettingsReasoningExplanation}" Style="{StaticResource MutedText}" />
+                                            </StackPanel>
+                                            <CheckBox Grid.Column="1"
+                                                      Content="{x:Static res:Strings.SettingsReasoningEnable}"
+                                                      IsChecked="{Binding EnableReasoning}"
+                                                      VerticalAlignment="Center" Margin="12,0,0,0" FontWeight="SemiBold" />
                                         </Grid>
-                                        <TextBlock Text="{Binding SelectedCloudModel.Description}"
-                                                   Style="{StaticResource MutedText}"
-                                                   Margin="0,6,0,0"
-                                                   FontSize="12" />
+
+                                        <StackPanel Margin="0,12,0,0" Visibility="{Binding EnableReasoning, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            <TextBlock Text="{x:Static res:Strings.SettingsReasoningEffort}" Style="{StaticResource BodyText}" FontWeight="SemiBold" Margin="0,0,0,6" />
+                                            <StackPanel Orientation="Horizontal">
+                                                <RadioButton GroupName="ReasoningEffortGroup" Content="{x:Static res:Strings.SettingsReasoningLow}" IsChecked="{Binding IsReasoningLow}" Margin="0,0,16,0" />
+                                                <RadioButton GroupName="ReasoningEffortGroup" Content="{x:Static res:Strings.SettingsReasoningMedium}" IsChecked="{Binding IsReasoningMedium}" Margin="0,0,16,0" />
+                                                <RadioButton GroupName="ReasoningEffortGroup" Content="{x:Static res:Strings.SettingsReasoningHigh}" IsChecked="{Binding IsReasoningHigh}" />
+                                            </StackPanel>
+                                        </StackPanel>
                                     </StackPanel>
                                 </Border>
 
-                                <!-- API Key Notice -->
-                                <Border Margin="0,12,0,0"
-                                        Padding="10,8"
-                                        CornerRadius="6"
-                                        Background="#224CC38A"
-                                        BorderBrush="{StaticResource SuccessBrush}"
-                                        BorderThickness="1"
-                                        Visibility="{Binding HasApiKeyForCloudStt, Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <TextBlock Text="✓ Clave de OpenRouter configurada en la pestaña IA."
-                                               Foreground="{StaticResource SuccessBrush}"
-                                               FontSize="12"
-                                               FontWeight="SemiBold" />
+                                <!-- Test Connection -->
+                                <Border Style="{StaticResource Card}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <TextBlock Text="{x:Static res:Strings.SettingsTimeout}" Style="{StaticResource BodyText}" VerticalAlignment="Center" />
+                                            <TextBox Width="70" Margin="8,0,16,0" Text="{Binding TimeoutSeconds}" />
+                                            <TextBlock Text="{Binding ConnectionMessage}" Style="{StaticResource BodyText}" VerticalAlignment="Center" Visibility="{Binding ConnectionMessage, Converter={StaticResource NullToCollapsedConverter}}" />
+                                        </StackPanel>
+                                        <Button Grid.Column="1"
+                                                Content="{x:Static res:Strings.SettingsTestConnection}"
+                                                Padding="14,8"
+                                                Command="{Binding TestConnectionCommand}"
+                                                IsEnabled="{Binding IsTestingConnection, Converter={StaticResource InverseBooleanConverter}}" />
+                                    </Grid>
                                 </Border>
-
-                                <Border Margin="0,12,0,0"
-                                        Padding="10,8"
-                                        CornerRadius="6"
-                                        Background="#22E05A5A"
-                                        BorderBrush="{StaticResource DangerBrush}"
-                                        BorderThickness="1"
-                                        Visibility="{Binding HasApiKeyForCloudStt, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Invert}">
-                                    <TextBlock Text="⚠️ Requiere tu clave de OpenRouter. Configúrala en la pestaña IA para transcribir con este modelo."
-                                               Foreground="{StaticResource DangerBrush}"
-                                               FontSize="12"
-                                               FontWeight="SemiBold" />
-                                </Border>
-
-                                <TextBlock Text="💡 Si no hay conexión a internet o el servicio en la nube falla, VoicePod recurrirá automáticamente al motor local si está descargado."
-                                           Style="{StaticResource MutedText}"
-                                           Margin="0,12,0,0"
-                                           FontSize="11" />
                             </StackPanel>
-                        </Border>
+                        </ScrollViewer>
+                    </TabItem>
 
-                        <!-- Local STT Section -->
-                        <Border Style="{StaticResource Card}"
-                                Margin="0,16,0,0"
-                                Visibility="{Binding IsLocalStt, Converter={StaticResource BoolToVisibilityConverter}}">
-                            <StackPanel>
-                                <TextBlock Text="{x:Static res:Strings.SettingsModelFolder}" Style="{StaticResource SectionText}" />
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBox Grid.Column="0" Text="{Binding ModelDirectory}" />
-                                    <Button Grid.Column="1" Content="{x:Static res:Strings.Browse}" Margin="8,0,0,0" Command="{Binding BrowseModelDirectoryCommand}" />
-                                </Grid>
-
-                                <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
-                                    <TextBlock Text="{x:Static res:Strings.SettingsThreads}" Style="{StaticResource BodyText}" VerticalAlignment="Center" />
-                                    <TextBox Width="60" Margin="8,0,0,0" Text="{Binding NumThreads}" />
-                                </StackPanel>
-
-                                <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
-                                    <Button Content="{x:Static res:Strings.SettingsDownloadModel}" Command="{Binding DownloadModelCommand}" />
-                                </StackPanel>
+                    <!-- TAB 6: PROFILES (CLEAN REWORK WITHOUT REDUNDANT MODEL/TEMP) -->
+                    <TabItem Style="{StaticResource SidebarTabItemStyle}">
+                        <TabItem.Header>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <iconPacks:PackIconLucide Kind="User" Width="15" Height="15" Margin="0,0,10,0" VerticalAlignment="Center" />
+                                <TextBlock Text="{x:Static res:Strings.TabProfiles}" VerticalAlignment="Center" />
                             </StackPanel>
-                        </Border>
+                        </TabItem.Header>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
 
-                        <!-- Common Status & Reload -->
-                        <Border Background="{StaticResource SurfaceBrush}" CornerRadius="6" Padding="12" Margin="0,16,0,0" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
-                            <Grid>
+                            <StackPanel Grid.Row="0" Margin="0,0,0,14">
+                                <TextBlock Text="{x:Static res:Strings.TabProfiles}" Style="{StaticResource HeaderText}" Margin="0,0,0,4" />
+                                <TextBlock Text="Crea y gestiona tus recetas de instrucciones (prompts). Cada perfil utiliza automáticamente el modelo de IA global." Style="{StaticResource MutedText}" />
+                            </StackPanel>
+
+                            <Grid Grid.Row="1">
                                 <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="220" />
                                     <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                                    <TextBlock Text="{x:Static res:Strings.SettingsStatus}" Style="{StaticResource BodyText}" VerticalAlignment="Center" />
-                                    <TextBlock Text="{Binding ModelStatus}"
-                                               Style="{StaticResource BodyText}"
-                                               FontWeight="SemiBold"
-                                               Foreground="{StaticResource AccentBrush}"
-                                               Margin="8,0,0,0"
-                                               VerticalAlignment="Center" />
-                                </StackPanel>
-                                <Button Grid.Column="1" Content="{x:Static res:Strings.SettingsReloadModel}" Command="{Binding ReloadModelCommand}" />
+
+                                <!-- Profiles List & Management -->
+                                <DockPanel Grid.Column="0">
+                                    <StackPanel DockPanel.Dock="Bottom" Margin="0,10,0,0">
+                                        <Button Command="{Binding NewProfileCommand}">
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                <iconPacks:PackIconLucide Kind="Plus" Width="12" Height="12" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                                <TextBlock Text="{x:Static res:Strings.New}" />
+                                            </StackPanel>
+                                        </Button>
+                                        <Button Margin="0,6,0,0" Command="{Binding DuplicateProfileCommand}">
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                <iconPacks:PackIconLucide Kind="Copy" Width="12" Height="12" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                                <TextBlock Text="{x:Static res:Strings.Duplicate}" />
+                                            </StackPanel>
+                                        </Button>
+                                        <Button Margin="0,6,0,0" Command="{Binding DeleteProfileCommand}">
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                <iconPacks:PackIconLucide Kind="X" Width="12" Height="12" Foreground="{StaticResource DangerBrush}" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                                <TextBlock Text="{x:Static res:Strings.Delete}" />
+                                            </StackPanel>
+                                        </Button>
+                                    </StackPanel>
+
+                                    <Border BorderBrush="{StaticResource LineaBrush}" BorderThickness="2.3" CornerRadius="10" Background="{StaticResource SurfaceBrush}" Padding="4">
+                                        <ListBox ItemsSource="{Binding Profiles}"
+                                                 SelectedItem="{Binding SelectedProfile}"
+                                                 DisplayMemberPath="Name"
+                                                 Background="Transparent"
+                                                 Foreground="{StaticResource TextBrush}"
+                                                 BorderThickness="0" />
+                                    </Border>
+                                </DockPanel>
+
+                                <!-- Profile Editor Detail -->
+                                <ScrollViewer Grid.Column="1" Margin="18,0,0,0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                    <StackPanel>
+                                        <!-- Profile Name -->
+                                        <TextBlock Text="{x:Static res:Strings.SettingsProfileName}" Style="{StaticResource SectionText}" />
+                                        <TextBox Text="{Binding ProfileName, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,12" FontWeight="SemiBold" />
+
+                                        <!-- Unified AI Model & Temperature Banner -->
+                                        <Border Background="#1C283F"
+                                                BorderBrush="{StaticResource AccentBrush}"
+                                                BorderThickness="1.5"
+                                                CornerRadius="10"
+                                                Padding="14,10"
+                                                Margin="0,0,0,14">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <iconPacks:PackIconLucide Grid.Column="0" Kind="Sparkles" Width="20" Height="20" Foreground="{StaticResource AccentBrush}" Margin="0,0,12,0" VerticalAlignment="Top" />
+                                                <StackPanel Grid.Column="1">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock Text="Motor IA vinculado: " Style="{StaticResource MutedText}" FontSize="11" VerticalAlignment="Center" />
+                                                        <TextBlock Text="{Binding GlobalModelName}" Foreground="{StaticResource AccentBrush}" FontWeight="Bold" FontSize="12" VerticalAlignment="Center" />
+                                                        <TextBlock Text=" · Temp: " Style="{StaticResource MutedText}" FontSize="11" VerticalAlignment="Center" Margin="6,0,0,0" />
+                                                        <TextBlock Text="{Binding GlobalTemperatureText}" Foreground="{StaticResource AccentBrush}" FontWeight="Bold" FontSize="12" VerticalAlignment="Center" />
+                                                    </StackPanel>
+                                                    <TextBlock Text="Este perfil adopta automáticamente el modelo de IA por defecto y los parámetros globales configurados en la pestaña 'Inteligencia Artificial', asegurando un comportamiento unificado."
+                                                               Style="{StaticResource MutedText}"
+                                                               FontSize="11"
+                                                               TextWrapping="Wrap"
+                                                               Margin="0,4,0,0" />
+                                                </StackPanel>
+                                            </Grid>
+                                        </Border>
+
+                                        <!-- Use LLM Checkbox -->
+                                        <CheckBox Content="{x:Static res:Strings.SettingsProfileUsesLlm}"
+                                                  IsChecked="{Binding ProfileUsesLlm}"
+                                                  FontWeight="SemiBold"
+                                                  Margin="0,0,0,14" />
+
+                                        <!-- Prompt Editor -->
+                                        <TextBlock Text="{x:Static res:Strings.SettingsProfilePrompt}" Style="{StaticResource SectionText}" />
+                                        <TextBlock Text="Instrucción de sistema para el LLM. Utiliza el marcador {transcript} si deseas ubicar el texto en una posición determinada."
+                                                   Style="{StaticResource MutedText}"
+                                                   Margin="0,0,0,6" />
+                                        <TextBox Text="{Binding ProfilePrompt, UpdateSourceTrigger=PropertyChanged}"
+                                                 Height="180"
+                                                 AcceptsReturn="True"
+                                                 TextWrapping="Wrap"
+                                                 VerticalScrollBarVisibility="Auto"
+                                                 FontFamily="Consolas, Segoe UI"
+                                                 FontSize="12.5" />
+
+                                        <!-- Profile Action Buttons -->
+                                        <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
+                                            <Button Content="{x:Static res:Strings.SettingsProfileSave}"
+                                                    Style="{StaticResource AccentButton}"
+                                                    Padding="14,8"
+                                                    Command="{Binding SaveProfileCommand}" />
+                                            <Button Content="{x:Static res:Strings.SettingsProfileRestore}"
+                                                    Margin="8,0,0,0"
+                                                    Padding="14,8"
+                                                    Command="{Binding RestoreProfilePromptCommand}" />
+                                            <Button Content="{x:Static res:Strings.SettingsProfileSetActive}"
+                                                    Margin="8,0,0,0"
+                                                    Padding="14,8"
+                                                    Command="{Binding SetActiveProfileCommand}" />
+                                        </StackPanel>
+
+                                        <TextBlock Text="{Binding ProfileMessage}"
+                                                   Style="{StaticResource BodyText}"
+                                                   Foreground="{StaticResource SuccessBrush}"
+                                                   FontWeight="SemiBold"
+                                                   Margin="0,10,0,0"
+                                                   Visibility="{Binding ProfileMessage, Converter={StaticResource NullToCollapsedConverter}}" />
+                                    </StackPanel>
+                                </ScrollViewer>
                             </Grid>
-                        </Border>
-                    </StackPanel>
-                </ScrollViewer>
-            </TabItem>
-
-            <!-- AI -->
-            <TabItem Header="{x:Static res:Strings.TabAi}">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                    <StackPanel Margin="16">
-                        <!-- Provider -->
-                        <TextBlock Text="{x:Static res:Strings.SettingsProviderLabel}" Style="{StaticResource SectionText}" />
-                        <ComboBox Width="220"
-                                  HorizontalAlignment="Left"
-                                  ItemsSource="{Binding LlmProviderOptions}"
-                                  DisplayMemberPath="Display"
-                                  SelectedItem="{Binding SelectedLlmProvider}" />
-
-                        <!-- Endpoint -->
-                        <TextBlock Text="{x:Static res:Strings.SettingsEndpoint}" Style="{StaticResource SectionText}" Margin="0,16,0,0" />
-                        <TextBox Text="{Binding BaseUrl, UpdateSourceTrigger=PropertyChanged, Delay=300}" />
-                        <TextBlock Text="{x:Static res:Strings.SettingsEndpointExamples}"
-                                   Style="{StaticResource MutedText}"
-                                   Margin="0,4,0,0" />
-                        <TextBlock Text="{x:Static res:Strings.OpenRouterHint}"
-                                   Style="{StaticResource MutedText}"
-                                   Margin="0,6,0,0"
-                                   Visibility="{Binding IsOpenRouter, Converter={StaticResource BoolToVisibilityConverter}}" />
-
-                        <!-- API Key -->
-                        <TextBlock Text="{x:Static res:Strings.SettingsApiKey}" Style="{StaticResource SectionText}" Margin="0,16,0,0" />
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <PasswordBox x:Name="ApiKeyBox"
-                                         Grid.Column="0"
-                                         Background="{StaticResource SurfaceAltBrush}"
-                                         Foreground="{StaticResource TextBrush}"
-                                         BorderBrush="{StaticResource BorderBrush}"
-                                         Padding="8,6"
-                                         PasswordChanged="OnApiKeyChanged" />
-                            <Button Grid.Column="1"
-                                    Content="{x:Static res:Strings.SettingsGetApiKey}"
-                                    Margin="8,0,0,0"
-                                    Command="{Binding OpenApiKeyPageCommand}"
-                                    Visibility="{Binding HasApiKeyUrl, Converter={StaticResource BoolToVisibilityConverter}}" />
                         </Grid>
-                        <TextBlock Text="{x:Static res:Strings.SettingsApiKeyHint}"
-                                   Style="{StaticResource MutedText}"
-                                   Margin="0,4,0,0" />
+                    </TabItem>
 
-                        <!-- Model Selection -->
-                        <TextBlock Text="{x:Static res:Strings.SettingsModel}" Style="{StaticResource SectionText}" Margin="0,18,0,4" />
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <TextBox Grid.Column="0" Text="{Binding Model, UpdateSourceTrigger=PropertyChanged}" />
-                            <Button Grid.Column="1"
-                                    Content="{x:Static res:Strings.SettingsBrowseModels}"
-                                    Margin="8,0,0,0"
-                                    Command="{Binding BrowseModelsCommand}" />
-                        </Grid>
-
-                        <!-- Parameters Card: Temperature & Max Tokens -->
-                        <Border Style="{StaticResource Card}" Margin="0,18,0,0">
-                            <StackPanel>
-                                <!-- Temperature Section -->
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                                        <TextBlock Text="{x:Static res:Strings.SettingsTemperature}" Style="{StaticResource SectionText}" Margin="0,0,8,0" />
-                                        <Border Background="{StaticResource SurfaceAltBrush}" CornerRadius="4" Padding="6,2" VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding TemperatureDisplay}" Foreground="{StaticResource AccentBrush}" FontWeight="Bold" FontSize="12" />
-                                        </Border>
-                                    </StackPanel>
-                                    <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                        <Button Content="{x:Static res:Strings.SettingsTemperaturePrecise}"
-                                                Padding="8,3" Margin="0,0,4,0" FontSize="11"
-                                                Command="{Binding SetTemperaturePresetCommand}" CommandParameter="0.1" />
-                                        <Button Content="{x:Static res:Strings.SettingsTemperatureBalanced}"
-                                                Padding="8,3" Margin="0,0,4,0" FontSize="11"
-                                                Command="{Binding SetTemperaturePresetCommand}" CommandParameter="0.3" />
-                                        <Button Content="{x:Static res:Strings.SettingsTemperatureCreative}"
-                                                Padding="8,3" FontSize="11"
-                                                Command="{Binding SetTemperaturePresetCommand}" CommandParameter="0.7" />
-                                    </StackPanel>
-                                </Grid>
-                                <Slider Minimum="0.0" Maximum="1.5" SmallChange="0.05" LargeChange="0.1"
-                                        Value="{Binding Temperature, UpdateSourceTrigger=PropertyChanged}"
-                                        Margin="0,8,0,4" />
-                                <TextBlock Text="{Binding TemperatureDescription}" Style="{StaticResource MutedText}" Margin="0,0,0,16" />
-
-                                <Separator Background="{StaticResource BorderBrush}" Margin="0,0,0,16" />
-
-                                <!-- Max Tokens Section -->
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <WrapPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                                        <TextBlock Text="{x:Static res:Strings.SettingsMaxTokens}" Style="{StaticResource SectionText}" Margin="0,0,8,0" VerticalAlignment="Center" />
-                                        <Border Background="{StaticResource SurfaceAltBrush}" CornerRadius="4" Padding="6,2" VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding MaxTokens}" Foreground="{StaticResource AccentBrush}" FontWeight="Bold" FontSize="12" />
-                                        </Border>
-                                        <TextBlock Text="{Binding MaxTokensWordsEstimate}" Style="{StaticResource MutedText}" Margin="8,0,0,0" VerticalAlignment="Center" />
-                                    </WrapPanel>
-                                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                                        <Button Content="{x:Static res:Strings.SettingsTokensShort}"
-                                                Padding="8,3" Margin="0,0,4,0" FontSize="11"
-                                                Command="{Binding SetMaxTokensPresetCommand}" CommandParameter="512" />
-                                        <Button Content="{x:Static res:Strings.SettingsTokensStandard}"
-                                                Padding="8,3" Margin="0,0,4,0" FontSize="11"
-                                                Command="{Binding SetMaxTokensPresetCommand}" CommandParameter="1024" />
-                                        <Button Content="{x:Static res:Strings.SettingsTokensLong}"
-                                                Padding="8,3" Margin="0,0,4,0" FontSize="11"
-                                                Command="{Binding SetMaxTokensPresetCommand}" CommandParameter="2048" />
-                                        <Button Content="{x:Static res:Strings.SettingsTokensMax}"
-                                                Padding="8,3" FontSize="11"
-                                                Command="{Binding SetMaxTokensPresetCommand}" CommandParameter="4096" />
-                                    </StackPanel>
-                                </Grid>
-                                <Slider Minimum="256" Maximum="4096" SmallChange="128" LargeChange="512"
-                                        Value="{Binding MaxTokens, UpdateSourceTrigger=PropertyChanged}"
-                                        Margin="0,8,0,4" />
-                                <TextBlock Text="{Binding MaxTokensDescription}" Style="{StaticResource MutedText}" TextWrapping="Wrap" />
+                    <!-- TAB 7: HISTORY -->
+                    <TabItem Style="{StaticResource SidebarTabItemStyle}">
+                        <TabItem.Header>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <iconPacks:PackIconLucide Kind="History" Width="15" Height="15" Margin="0,0,10,0" VerticalAlignment="Center" />
+                                <TextBlock Text="{x:Static res:Strings.TabHistory}" VerticalAlignment="Center" />
                             </StackPanel>
-                        </Border>
-
-                        <!-- Reasoning (Thinking) Section Card -->
-                        <Border Style="{StaticResource Card}" Margin="0,14,0,0">
+                        </TabItem.Header>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                             <StackPanel>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="0">
-                                        <TextBlock Text="{x:Static res:Strings.SettingsReasoningTitle}" Style="{StaticResource SectionText}" Margin="0,0,0,2" />
-                                        <TextBlock Text="{x:Static res:Strings.SettingsReasoningExplanation}" Style="{StaticResource MutedText}" />
-                                    </StackPanel>
-                                    <CheckBox Grid.Column="1"
-                                              Content="{x:Static res:Strings.SettingsReasoningEnable}"
-                                              IsChecked="{Binding EnableReasoning}"
-                                              VerticalAlignment="Center" Margin="12,0,0,0" FontWeight="SemiBold" />
-                                </Grid>
+                                <TextBlock Text="{x:Static res:Strings.TabHistory}" Style="{StaticResource HeaderText}" Margin="0,0,0,4" />
+                                <TextBlock Text="Administra la retención local de tus transcripciones y archivos de audio." Style="{StaticResource MutedText}" Margin="0,0,0,16" />
 
-                                <StackPanel Margin="0,14,0,0" Visibility="{Binding EnableReasoning, Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <TextBlock Text="{x:Static res:Strings.SettingsReasoningEffort}" Style="{StaticResource BodyText}" FontWeight="SemiBold" Margin="0,0,0,6" />
-                                    <StackPanel Orientation="Horizontal">
-                                        <RadioButton GroupName="ReasoningEffortGroup"
-                                                     Content="{x:Static res:Strings.SettingsReasoningLow}"
-                                                     IsChecked="{Binding IsReasoningLow}"
-                                                     Margin="0,0,16,0" />
-                                        <RadioButton GroupName="ReasoningEffortGroup"
-                                                     Content="{x:Static res:Strings.SettingsReasoningMedium}"
-                                                     IsChecked="{Binding IsReasoningMedium}"
-                                                     Margin="0,0,16,0" />
-                                        <RadioButton GroupName="ReasoningEffortGroup"
-                                                     Content="{x:Static res:Strings.SettingsReasoningHigh}"
-                                                     IsChecked="{Binding IsReasoningHigh}" />
+                                <Border Style="{StaticResource Card}" Margin="0,0,0,14">
+                                    <StackPanel>
+                                        <TextBlock Text="{x:Static res:Strings.SettingsRetention}" Style="{StaticResource SectionText}" />
+                                        <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                                            <TextBlock Text="{x:Static res:Strings.SettingsMaxEntries}" Style="{StaticResource BodyText}" VerticalAlignment="Center" />
+                                            <TextBox Width="90" Margin="8,0,20,0" Text="{Binding MaxEntries}" />
+                                            <TextBlock Text="{x:Static res:Strings.SettingsMaxAgeDays}" Style="{StaticResource BodyText}" VerticalAlignment="Center" />
+                                            <TextBox Width="90" Margin="8,0,0,0" Text="{Binding MaxAgeDays}" />
+                                        </StackPanel>
+                                        <TextBlock Text="{x:Static res:Strings.SettingsRetentionHint}" Style="{StaticResource MutedText}" Margin="0,8,0,0" />
+
+                                        <CheckBox Content="{x:Static res:Strings.SettingsSaveAudio}" IsChecked="{Binding SaveAudio}" Margin="0,16,0,0" />
                                     </StackPanel>
-                                </StackPanel>
+                                </Border>
+
+                                <Border Style="{StaticResource Card}">
+                                    <StackPanel>
+                                        <TextBlock Text="Mantenimiento de Datos" Style="{StaticResource SectionText}" />
+                                        <TextBlock Text="Elimina permanentemente todo el historial de transcripciones guardado en el disco." Style="{StaticResource MutedText}" Margin="0,0,0,12" />
+                                        <Button Content="{x:Static res:Strings.HistoryClearAll}"
+                                                HorizontalAlignment="Left"
+                                                Padding="14,8"
+                                                Command="{Binding ClearHistoryCommand}" />
+                                        <TextBlock Text="{Binding HistoryMessage}"
+                                                   Style="{StaticResource BodyText}"
+                                                   Foreground="{StaticResource SuccessBrush}"
+                                                   FontWeight="SemiBold"
+                                                   Margin="0,10,0,0"
+                                                   Visibility="{Binding HistoryMessage, Converter={StaticResource NullToCollapsedConverter}}" />
+                                    </StackPanel>
+                                </Border>
                             </StackPanel>
-                        </Border>
+                        </ScrollViewer>
+                    </TabItem>
+                </TabControl>
+            </Grid>
 
-                        <!-- Timeout & Test Connection -->
-                        <StackPanel Orientation="Horizontal" Margin="0,18,0,0">
-                            <TextBlock Text="{x:Static res:Strings.SettingsTimeout}" Style="{StaticResource BodyText}" VerticalAlignment="Center" />
-                            <TextBox Width="70" Margin="8,0,16,0" Text="{Binding TimeoutSeconds}" />
-                            <Button Content="{x:Static res:Strings.SettingsTestConnection}"
-                                    Command="{Binding TestConnectionCommand}"
-                                    IsEnabled="{Binding IsTestingConnection, Converter={StaticResource InverseBooleanConverter}}" />
-                        </StackPanel>
-
-                        <TextBlock Text="{Binding ConnectionMessage}"
-                                   Style="{StaticResource BodyText}"
-                                   Margin="0,12,0,0"
-                                   Visibility="{Binding ConnectionMessage, Converter={StaticResource NullToCollapsedConverter}}" />
-                    </StackPanel>
-                </ScrollViewer>
-            </TabItem>
-
-            <!-- Profiles -->
-            <TabItem Header="{x:Static res:Strings.TabProfiles}">
-                <Grid Margin="16">
+            <!-- Bottom Action Footer -->
+            <Border Grid.Row="2"
+                    Background="{StaticResource SurfaceBrush}"
+                    BorderThickness="0,2.3,0,0"
+                    BorderBrush="{StaticResource LineaBrush}"
+                    Padding="20,12">
+                <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="200" />
                         <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
-                    <DockPanel Grid.Column="0">
-                        <StackPanel DockPanel.Dock="Bottom" Margin="0,8,0,0">
-                            <Button Content="{x:Static res:Strings.New}" Command="{Binding NewProfileCommand}" />
-                            <Button Content="{x:Static res:Strings.Duplicate}" Margin="0,6,0,0" Command="{Binding DuplicateProfileCommand}" />
-                            <Button Content="{x:Static res:Strings.Delete}" Margin="0,6,0,0" Command="{Binding DeleteProfileCommand}" />
-                        </StackPanel>
-                        <ListBox ItemsSource="{Binding Profiles}"
-                                 SelectedItem="{Binding SelectedProfile}"
-                                 DisplayMemberPath="Name"
-                                 Background="{StaticResource SurfaceAltBrush}"
-                                 Foreground="{StaticResource TextBrush}"
-                                 BorderBrush="{StaticResource BorderBrush}" />
-                    </DockPanel>
-
-                    <Grid Grid.Column="1" Margin="12,0,0,0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-
-                        <StackPanel Grid.Row="0">
-                            <TextBlock Text="{x:Static res:Strings.SettingsProfileName}" Style="{StaticResource BodyText}" />
-                            <TextBox Text="{Binding ProfileName, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,0" />
-                        </StackPanel>
-
-                        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,10,0,0">
-                            <CheckBox Content="{x:Static res:Strings.SettingsProfileUsesLlm}" IsChecked="{Binding ProfileUsesLlm}" VerticalAlignment="Center" />
-                            <TextBlock Text="{x:Static res:Strings.SettingsProfileModel}" Style="{StaticResource BodyText}" Margin="16,0,0,0" VerticalAlignment="Center" />
-                            <TextBox Width="160" Margin="6,0,0,0" Text="{Binding ProfileModel}" />
-                            <TextBlock Text="{x:Static res:Strings.SettingsProfileTemperature}" Style="{StaticResource BodyText}" Margin="12,0,0,0" VerticalAlignment="Center" />
-                            <TextBox Width="60" Margin="6,0,0,0" Text="{Binding ProfileTemperature}" />
-                        </StackPanel>
-
-                        <StackPanel Grid.Row="2" Margin="0,12,0,0">
-                            <TextBlock Text="{x:Static res:Strings.SettingsProfilePrompt}" Style="{StaticResource BodyText}" />
-                            <TextBox Text="{Binding ProfilePrompt, UpdateSourceTrigger=PropertyChanged}"
-                                     Height="220"
-                                     Margin="0,4,0,0"
-                                     AcceptsReturn="True"
-                                     TextWrapping="Wrap"
-                                     VerticalScrollBarVisibility="Auto" />
-                        </StackPanel>
-
-                        <StackPanel Grid.Row="3" Margin="0,10,0,0">
-                            <StackPanel Orientation="Horizontal">
-                                <Button Content="{x:Static res:Strings.SettingsProfileSave}" Style="{StaticResource AccentButton}" Command="{Binding SaveProfileCommand}" />
-                                <Button Content="{x:Static res:Strings.SettingsProfileRestore}" Margin="8,0,0,0" Command="{Binding RestoreProfilePromptCommand}" />
-                                <Button Content="{x:Static res:Strings.SettingsProfileSetActive}" Margin="8,0,0,0" Command="{Binding SetActiveProfileCommand}" />
-                            </StackPanel>
-                            <TextBlock Text="{Binding ProfileMessage}"
-                                       Style="{StaticResource MutedText}"
-                                       Margin="0,8,0,0"
-                                       Visibility="{Binding ProfileMessage, Converter={StaticResource NullToCollapsedConverter}}" />
-                        </StackPanel>
-                    </Grid>
-                </Grid>
-            </TabItem>
-
-            <!-- History -->
-            <TabItem Header="{x:Static res:Strings.TabHistory}">
-                <StackPanel Margin="16">
-                    <TextBlock Text="{x:Static res:Strings.SettingsRetention}" Style="{StaticResource SectionText}" />
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{x:Static res:Strings.SettingsMaxEntries}" Style="{StaticResource BodyText}" VerticalAlignment="Center" />
-                        <TextBox Width="90" Margin="8,0,16,0" Text="{Binding MaxEntries}" />
-                        <TextBlock Text="{x:Static res:Strings.SettingsMaxAgeDays}" Style="{StaticResource BodyText}" VerticalAlignment="Center" />
-                        <TextBox Width="90" Margin="8,0,0,0" Text="{Binding MaxAgeDays}" />
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                        <TextBlock Text="VoicePod Studio · Los cambios se aplican al guardar" Style="{StaticResource MutedText}" />
                     </StackPanel>
-                    <TextBlock Text="{x:Static res:Strings.SettingsRetentionHint}"
-                               Style="{StaticResource MutedText}"
-                               Margin="0,6,0,0" />
 
-                    <CheckBox Content="{x:Static res:Strings.SettingsSaveAudio}"
-                              IsChecked="{Binding SaveAudio}"
-                              Margin="0,16,0,0" />
-
-                    <Button Content="{x:Static res:Strings.HistoryClearAll}"
-                            HorizontalAlignment="Left"
-                            Margin="0,16,0,0"
-                            Command="{Binding ClearHistoryCommand}" />
-
-                    <TextBlock Text="{Binding HistoryMessage}"
-                               Style="{StaticResource MutedText}"
-                               Margin="0,10,0,0"
-                               Visibility="{Binding HistoryMessage, Converter={StaticResource NullToCollapsedConverter}}" />
-                </StackPanel>
-            </TabItem>
-        </TabControl>
-
-        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
-            <Button Content="{x:Static res:Strings.Close}" Click="OnCloseClick" />
-            <Button Content="{x:Static res:Strings.Save}" Style="{StaticResource AccentButton}" Margin="8,0,0,0" Click="OnSaveClick" />
-        </StackPanel>
-    </Grid>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Content="{x:Static res:Strings.Close}"
+                                Style="{StaticResource SecondaryActionButton}"
+                                Width="110"
+                                Height="38"
+                                Click="OnCloseClick" />
+                        <Button Style="{StaticResource PrimaryActionButton}"
+                                Width="170"
+                                Height="38"
+                                Margin="10,0,0,0"
+                                Click="OnSaveClick">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <iconPacks:PackIconLucide Kind="Check" Width="14" Height="14" Foreground="White" Margin="0,0,7,0" VerticalAlignment="Center" />
+                                <TextBlock Text="{x:Static res:Strings.Save}" FontWeight="SemiBold" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
 </Window>
