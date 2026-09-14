@@ -1,8 +1,9 @@
-# VoiceFlow
+# VoicePod
 
-Dictado por voz para Windows 10/11 con **transcripción local** (NVIDIA Parakeet TDT 0.6B v3
-INT8 sobre sherpa-onnx) y **post-proceso opcional con un LLM** por API. Pulsas un atajo
-global, hablas, y el texto final se pega solo en la ventana que tenías delante.
+Dictado por voz inteligente para Windows 10/11 con **transcripción local offline** (NVIDIA Parakeet TDT 0.6B v3
+INT8 sobre sherpa-onnx) y **refinamiento opcional con LLMs** (OpenRouter / OpenAI) con control de temperatura,
+tope de longitud y razonamiento (Thinking / CoT). Pulsas un atajo global (ej. `Ctrl + Alt`), hablas, y el texto final
+se pega automáticamente en la ventana que tenías delante.
 
 - El audio **nunca sale del equipo**: la transcripción se ejecuta en tu CPU.
 - Al LLM solo se envía el texto transcrito, y únicamente si el perfil activo lo usa.
