@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- Common -->
+  <data name="Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Close" xml:space="preserve"><value>Close</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Delete" xml:space="preserve"><value>Delete</value></data>
+  <data name="New" xml:space="preserve"><value>New</value></data>
+  <data name="Duplicate" xml:space="preserve"><value>Duplicate</value></data>
+  <data name="Refresh" xml:space="preserve"><value>Refresh</value></data>
+  <data name="Browse" xml:space="preserve"><value>Browse...</value></data>
+  <data name="Clear" xml:space="preserve"><value>Clear</value></data>
+
+  <!-- Pipeline states -->
+  <data name="StateIdle" xml:space="preserve"><value>Ready</value></data>
+  <data name="StateRecording" xml:space="preserve"><value>Recording...</value></data>
+  <data name="StateTranscribing" xml:space="preserve"><value>Transcribing...</value></data>
+  <data name="StateProcessing" xml:space="preserve"><value>Post-processing with AI...</value></data>
+  <data name="StatePasting" xml:space="preserve"><value>Pasting...</value></data>
+  <data name="StateError" xml:space="preserve"><value>Error</value></data>
+
+  <!-- Main window -->
+  <data name="MainSubtitle" xml:space="preserve"><value>Voice dictation with local transcription and AI post-processing</value></data>
+  <data name="MainHotkeyLabel" xml:space="preserve"><value>Hotkey:</value></data>
+  <data name="MainDictate" xml:space="preserve"><value>Dictate</value></data>
+  <data name="MainLastDictation" xml:space="preserve"><value>Last dictation</value></data>
+  <data name="ModeHold" xml:space="preserve"><value>Hold to talk</value></data>
+  <data name="ModeToggle" xml:space="preserve"><value>Press to start / stop</value></data>
+  <data name="ModelStatusChecking" xml:space="preserve"><value>Model: checking...</value></data>
+  <data name="ModelStatusReady" xml:space="preserve"><value>Model: ready</value></data>
+  <data name="ModelStatusLoading" xml:space="preserve"><value>Model: loading...</value></data>
+  <data name="ModelStatusDownloading" xml:space="preserve"><value>Model: downloading...</value></data>
+  <data name="ModelStatusMissing" xml:space="preserve"><value>Model: not downloaded</value></data>
+  <data name="ModelStatusFailedFormat" xml:space="preserve"><value>Model: error — {0}</value></data>
+
+  <!-- Tray -->
+  <data name="TrayOpen" xml:space="preserve"><value>Open VoiceFlow</value></data>
+  <data name="TrayActiveProfile" xml:space="preserve"><value>Active profile</value></data>
+  <data name="TrayHistory" xml:space="preserve"><value>History</value></data>
+  <data name="TraySettings" xml:space="preserve"><value>Settings</value></data>
+  <data name="TrayExit" xml:space="preserve"><value>Exit</value></data>
+
+  <!-- Runtime messages -->
+  <data name="MessageRecordingTooShort" xml:space="preserve"><value>Recording too short, discarded.</value></data>
+  <data name="MessageDictationCancelled" xml:space="preserve"><value>Dictation cancelled.</value></data>
+  <data name="MessageNoTextRecognized" xml:space="preserve"><value>No speech was recognised.</value></data>
+  <data name="MessageLlmFallback" xml:space="preserve"><value>The AI call failed; the raw transcript will be used.</value></data>
+  <data name="MessageMicrophoneFailedFormat" xml:space="preserve"><value>Could not open the microphone: {0}</value></data>
+  <data name="MessageDictationFailedFormat" xml:space="preserve"><value>Dictation failed: {0}</value></data>
+  <data name="MessageCopiedNotPasted" xml:space="preserve"><value>Text copied — could not paste</value></data>
+  <data name="MessageDeliveryFailedFormat" xml:space="preserve"><value>Could not deliver the text: {0}</value></data>
+  <data name="MessageUnexpectedError" xml:space="preserve"><value>An unexpected error occurred. The app is still running.</value></data>
+  <data name="MessageHotkeyFailed" xml:space="preserve"><value>The hotkey could not be registered.</value></data>
+  <data name="MessageModelMissingTray" xml:space="preserve"><value>The transcription model is missing. Open VoiceFlow to download it.</value></data>
+  <data name="MessageStartupFailedFormat" xml:space="preserve"><value>VoiceFlow could not start:
+{0}</value></data>
+  <data name="UnknownError" xml:space="preserve"><value>unknown error</value></data>
+
+  <data name="HotkeyInUseFormat" xml:space="preserve"><value>The {0} hotkey is already in use by another application.</value></data>
+  <data name="HotkeyInvalid" xml:space="preserve"><value>That key combination is not valid.</value></data>
+  <data name="HotkeyRegisterFailedFormat" xml:space="preserve"><value>Could not register the {0} hotkey: {1}</value></data>
+  <data name="ConnectionOk" xml:space="preserve"><value>Connection OK.</value></data>
+
+  <data name="LanguageSpanish" xml:space="preserve"><value>Spanish</value></data>
+  <data name="LanguageEnglish" xml:space="preserve"><value>English</value></data>
+
+  <!-- Key names used by the hotkey display -->
+  <data name="KeySpace" xml:space="preserve"><value>Space</value></data>
+  <data name="KeyEnter" xml:space="preserve"><value>Enter</value></data>
+  <data name="KeyEsc" xml:space="preserve"><value>Esc</value></data>
+  <data name="KeyTab" xml:space="preserve"><value>Tab</value></data>
+  <data name="KeyBackspace" xml:space="preserve"><value>Backspace</value></data>
+  <data name="KeyDelete" xml:space="preserve"><value>Del</value></data>
+  <data name="KeyInsert" xml:space="preserve"><value>Insert</value></data>
+  <data name="KeyHome" xml:space="preserve"><value>Home</value></data>
+  <data name="KeyEnd" xml:space="preserve"><value>End</value></data>
+  <data name="KeyPageUp" xml:space="preserve"><value>Page Up</value></data>
+  <data name="KeyPageDown" xml:space="preserve"><value>Page Down</value></data>
+  <data name="KeyLeft" xml:space="preserve"><value>Left</value></data>
+  <data name="KeyRight" xml:space="preserve"><value>Right</value></data>
+  <data name="KeyUp" xml:space="preserve"><value>Up</value></data>
+  <data name="KeyDown" xml:space="preserve"><value>Down</value></data>
+
+  <!-- AI providers and model picker -->
+  <data name="SettingsProviderLabel" xml:space="preserve"><value>Provider</value></data>
+  <data name="ProviderCustom" xml:space="preserve"><value>Custom</value></data>
+  <data name="SettingsGetApiKey" xml:space="preserve"><value>Get a key</value></data>
+  <data name="SettingsBrowseModels" xml:space="preserve"><value>Browse models...</value></data>
+  <data name="OpenRouterHint" xml:space="preserve"><value>On OpenRouter model ids are prefixed (openai/gpt-4o-mini). "Test connection" validates the key and shows the credit left.</value></data>
+  <data name="ConnectionOkFormat" xml:space="preserve"><value>Connection OK — {0}</value></data>
+  <data name="ModelPickerTitle" xml:space="preserve"><value>VoiceFlow — Choose a model</value></data>
+  <data name="ModelPickerSearchHint" xml:space="preserve"><value>Filter by name or id</value></data>
+  <data name="ModelPickerOnlyFree" xml:space="preserve"><value>Free models only</value></data>
+  <data name="ModelPickerLoading" xml:space="preserve"><value>Loading the model catalogue...</value></data>
+  <data name="ModelPickerCountFormat" xml:space="preserve"><value>{0} of {1} models</value></data>
+  <data name="ModelPickerEmpty" xml:space="preserve"><value>This server publishes no model catalogue.</value></data>
+  <data name="ModelPickerErrorFormat" xml:space="preserve"><value>Could not load the catalogue: {0}</value></data>
+  <data name="ModelPickerUse" xml:space="preserve"><value>Use this model</value></data>
+
+  <!-- Model setup -->
+  <data name="SetupTitle" xml:space="preserve"><value>VoiceFlow — Transcription model</value></data>
+  <data name="SetupHeader" xml:space="preserve"><value>Download the transcription model</value></data>
+  <data name="SetupSubtitle" xml:space="preserve"><value>Parakeet TDT 0.6B v3 (INT8) — local transcription, no audio ever leaves your machine.</value></data>
+  <data name="SetupTargetFolder" xml:space="preserve"><value>Destination folder</value></data>
+  <data name="SetupUseLocalFolder" xml:space="preserve"><value>Use a local folder...</value></data>
+  <data name="SetupDownload" xml:space="preserve"><value>Download model</value></data>
+  <data name="SetupSizeFormat" xml:space="preserve"><value>The model takes about {0} GB. It is downloaded once and kept in the folder above.</value></data>
+  <data name="SetupProgressFormat" xml:space="preserve"><value>{0} ({1}/{2}) — {3} MB of {4} MB</value></data>
+  <data name="SetupCancelled" xml:space="preserve"><value>Download cancelled. You can resume it: the files already fetched are kept.</value></data>
+  <data name="SetupIncompleteFolderFormat" xml:space="preserve"><value>That folder does not hold the full model ({0} is missing).</value></data>
+  <data name="SetupLoadingModel" xml:space="preserve"><value>Model ready. Loading it into memory...</value></data>
+  <data name="SetupModelReady" xml:space="preserve"><value>Model loaded and ready to dictate.</value></data>
+  <data name="SetupModelLoadFailed" xml:space="preserve"><value>The model could not be loaded.</value></data>
+  <data name="SetupPickFolderTitle" xml:space="preserve"><value>Select the Parakeet model folder</value></data>
+
+  <!-- History window -->
+  <data name="HistoryTitle" xml:space="preserve"><value>VoiceFlow — History</value></data>
+  <data name="HistorySearchHint" xml:space="preserve"><value>Search the transcript and the processed text</value></data>
+  <data name="HistoryCopyProcessed" xml:space="preserve"><value>Copy text</value></data>
+  <data name="HistoryCopyRaw" xml:space="preserve"><value>Copy raw</value></data>
+  <data name="HistoryReprocess" xml:space="preserve"><value>Reprocess</value></data>
+  <data name="HistoryClearAll" xml:space="preserve"><value>Delete all history</value></data>
+  <data name="HistoryAllProfiles" xml:space="preserve"><value>All profiles</value></data>
+  <data name="HistoryEmpty" xml:space="preserve"><value>No dictations match.</value></data>
+  <data name="HistoryCountFormat" xml:space="preserve"><value>{0} dictation(s)</value></data>
+  <data name="HistoryReadErrorFormat" xml:space="preserve"><value>Could not read the history: {0}</value></data>
+  <data name="HistoryProcessedCopied" xml:space="preserve"><value>Processed text copied to the clipboard.</value></data>
+  <data name="HistoryRawCopied" xml:space="preserve"><value>Raw transcript copied to the clipboard.</value></data>
+  <data name="HistoryEntryDeleted" xml:space="preserve"><value>Entry deleted.</value></data>
+  <data name="HistoryCleared" xml:space="preserve"><value>History deleted.</value></data>
+  <data name="HistoryConfirmClear" xml:space="preserve"><value>Delete the whole history? This cannot be undone.</value></data>
+  <data name="HistoryReprocessingFormat" xml:space="preserve"><value>Reprocessing with the {0} profile...</value></data>
+  <data name="HistoryReprocessedCopied" xml:space="preserve"><value>Reprocessed and copied to the clipboard.</value></data>
+  <data name="HistoryReprocessErrorFormat" xml:space="preserve"><value>Reprocessing failed: {0}</value></data>
+  <data name="HistoryLlmFailedFormat" xml:space="preserve"><value>The AI call failed: {0}</value></data>
+  <data name="HistoryPasteProblem" xml:space="preserve"><value>Could not paste (text was copied)</value></data>
+
+  <!-- Settings window -->
+  <data name="SettingsTitle" xml:space="preserve"><value>VoiceFlow — Settings</value></data>
+  <data name="TabGeneral" xml:space="preserve"><value>General</value></data>
+  <data name="TabHotkey" xml:space="preserve"><value>Hotkey</value></data>
+  <data name="TabAudio" xml:space="preserve"><value>Audio</value></data>
+  <data name="TabTranscription" xml:space="preserve"><value>Transcription</value></data>
+  <data name="TabAi" xml:space="preserve"><value>AI</value></data>
+  <data name="TabProfiles" xml:space="preserve"><value>Profiles</value></data>
+  <data name="TabHistory" xml:space="preserve"><value>History</value></data>
+
+  <data name="SettingsStartWithWindows" xml:space="preserve"><value>Start with Windows (in the tray)</value></data>
+  <data name="SettingsMinimizeToTray" xml:space="preserve"><value>Minimise to the tray when the window is closed</value></data>
+  <data name="SettingsPlaySounds" xml:space="preserve"><value>Play start and stop sounds</value></data>
+  <data name="SettingsLanguage" xml:space="preserve"><value>Interface language</value></data>
+  <data name="SettingsLanguageHint" xml:space="preserve"><value>The language change takes effect when VoiceFlow restarts.</value></data>
+  <data name="SettingsPasteSection" xml:space="preserve"><value>Pasting</value></data>
+  <data name="SettingsRestoreClipboard" xml:space="preserve"><value>Restore the clipboard after pasting</value></data>
+  <data name="SettingsTypeUnicode" xml:space="preserve"><value>Type character by character (for apps that block pasting)</value></data>
+  <data name="SettingsPasteDelay" xml:space="preserve"><value>Delay after pasting (ms):</value></data>
+
+  <data name="SettingsHotkeyCombination" xml:space="preserve"><value>Global combination</value></data>
+  <data name="SettingsHotkeyHint" xml:space="preserve"><value>Click «Record shortcut» and press the combination you want.</value></data>
+  <data name="SettingsHotkeyRecord" xml:space="preserve"><value>Record shortcut</value></data>
+  <data name="SettingsHotkeyListening" xml:space="preserve"><value>🔴 Press your shortcut on the keyboard... (Esc to cancel)</value></data>
+  <data name="SettingsHotkeyReset" xml:space="preserve"><value>Reset to Ctrl + Alt + Space</value></data>
+  <data name="SettingsHotkeyMode" xml:space="preserve"><value>Mode</value></data>
+  <data name="SettingsHotkeyToggleOption" xml:space="preserve"><value>Press once to start and again to stop (toggle)</value></data>
+  <data name="SettingsHotkeyHoldOption" xml:space="preserve"><value>Hold while speaking (push to talk)</value></data>
+  <data name="SettingsHotkeyNeedsModifier" xml:space="preserve"><value>Add at least one modifier key (Ctrl, Alt, Shift or Win).</value></data>
+
+  <data name="SettingsInputDevice" xml:space="preserve"><value>Input device</value></data>
+  <data name="SettingsMicTest" xml:space="preserve"><value>Microphone test</value></data>
+  <data name="SettingsMicTestStart" xml:space="preserve"><value>Test microphone</value></data>
+  <data name="SettingsMicTestStop" xml:space="preserve"><value>Stop</value></data>
+  <data name="SettingsMaxDuration" xml:space="preserve"><value>Maximum recording length (s):</value></data>
+
+  <data name="SettingsModelFolder" xml:space="preserve"><value>Model folder</value></data>
+  <data name="SettingsThreads" xml:space="preserve"><value>Threads:</value></data>
+  <data name="SettingsProvider" xml:space="preserve"><value>Execution:</value></data>
+  <data name="SettingsStatus" xml:space="preserve"><value>Status:</value></data>
+  <data name="SettingsDownloadModel" xml:space="preserve"><value>Download / repair model</value></data>
+  <data name="SettingsReloadModel" xml:space="preserve"><value>Reload model</value></data>
+  <data name="SettingsModelPickerTitle" xml:space="preserve"><value>Select the model folder</value></data>
+  <data name="ModelStateReady" xml:space="preserve"><value>Loaded and ready</value></data>
+  <data name="ModelStateLoading" xml:space="preserve"><value>Loading into memory...</value></data>
+  <data name="ModelStateDownloading" xml:space="preserve"><value>Downloading...</value></data>
+  <data name="ModelStateFailedFormat" xml:space="preserve"><value>Error: {0}</value></data>
+  <data name="ModelStateDownloadedNotLoaded" xml:space="preserve"><value>Downloaded, not loaded</value></data>
+  <data name="ModelStateNotDownloaded" xml:space="preserve"><value>Not downloaded</value></data>
+
+  <data name="SettingsEndpoint" xml:space="preserve"><value>OpenAI-compatible endpoint</value></data>
+  <data name="SettingsEndpointExamples" xml:space="preserve"><value>Examples: https://api.openai.com/v1 · https://openrouter.ai/api/v1 · http://localhost:1234/v1</value></data>
+  <data name="SettingsApiKey" xml:space="preserve"><value>API key</value></data>
+  <data name="SettingsApiKeyHint" xml:space="preserve"><value>Stored encrypted with DPAPI for your Windows user.</value></data>
+  <data name="SettingsModel" xml:space="preserve"><value>Model</value></data>
+  <data name="SettingsTemperature" xml:space="preserve"><value>Temperature</value></data>
+  <data name="SettingsTemperaturePrecise" xml:space="preserve"><value>Precise (0.1)</value></data>
+  <data name="SettingsTemperatureBalanced" xml:space="preserve"><value>Balanced (0.3)</value></data>
+  <data name="SettingsTemperatureCreative" xml:space="preserve"><value>Creative (0.7)</value></data>
+  <data name="SettingsTemperatureExplanation" xml:space="preserve"><value>Controls creativity. Lower values (0.1) are literal and exact for dictation; higher values (0.7+) add lexical variety and style.</value></data>
+
+  <data name="SettingsMaxTokens" xml:space="preserve"><value>Max text length limit</value></data>
+  <data name="SettingsTokensShort" xml:space="preserve"><value>Up to 512</value></data>
+  <data name="SettingsTokensStandard" xml:space="preserve"><value>Up to 1024</value></data>
+  <data name="SettingsTokensLong" xml:space="preserve"><value>Up to 2048</value></data>
+  <data name="SettingsTokensMax" xml:space="preserve"><value>Up to 4096</value></data>
+  <data name="SettingsTokensExplanation" xml:space="preserve"><value>Maximum text length ceiling. Does not affect short texts (the AI will only answer what you speak, without padding). Note: don't worry about your balance, only tokens actually generated are billed.</value></data>
+
+  <data name="SettingsReasoningTitle" xml:space="preserve"><value>Model reasoning (Thinking)</value></data>
+  <data name="SettingsReasoningEnable" xml:space="preserve"><value>Enable model reasoning (Chain of Thought)</value></data>
+  <data name="SettingsReasoningEffort" xml:space="preserve"><value>Effort level:</value></data>
+  <data name="SettingsReasoningLow" xml:space="preserve"><value>Low (Fast)</value></data>
+  <data name="SettingsReasoningMedium" xml:space="preserve"><value>Medium</value></data>
+  <data name="SettingsReasoningHigh" xml:space="preserve"><value>High (Deep)</value></data>
+  <data name="SettingsReasoningExplanation" xml:space="preserve"><value>For models that think before responding (e.g. GLM-5, DeepSeek R1, o3-mini, Claude Thinking). Turn off for fast dictation with no delay, or turn on for analytical reasoning.</value></data>
+
+  <data name="SettingsTimeout" xml:space="preserve"><value>Timeout (s):</value></data>
+  <data name="SettingsTestConnection" xml:space="preserve"><value>Test connection</value></data>
+  <data name="SettingsTesting" xml:space="preserve"><value>Testing...</value></data>
+
+  <data name="SettingsProfileName" xml:space="preserve"><value>Name</value></data>
+  <data name="SettingsProfileUsesLlm" xml:space="preserve"><value>Use AI</value></data>
+  <data name="SettingsProfileModel" xml:space="preserve"><value>Model:</value></data>
+  <data name="SettingsProfileTemperature" xml:space="preserve"><value>Temp.:</value></data>
+  <data name="SettingsProfilePrompt" xml:space="preserve"><value>System prompt — supports the {transcript} variable</value></data>
+  <data name="SettingsProfileSave" xml:space="preserve"><value>Save profile</value></data>
+  <data name="SettingsProfileRestore" xml:space="preserve"><value>Restore default</value></data>
+  <data name="SettingsProfileSetActive" xml:space="preserve"><value>Set as active</value></data>
+  <data name="SettingsProfileSaved" xml:space="preserve"><value>Profile saved.</value></data>
+  <data name="SettingsProfileNoDefault" xml:space="preserve"><value>This profile has no default prompt.</value></data>
+  <data name="SettingsProfileRestored" xml:space="preserve"><value>Prompt restored. Remember to save.</value></data>
+  <data name="SettingsProfileActiveFormat" xml:space="preserve"><value>"{0}" is now the active profile.</value></data>
+  <data name="SettingsProfileConfirmDeleteFormat" xml:space="preserve"><value>Delete the "{0}" profile?</value></data>
+  <data name="SettingsProfileNewName" xml:space="preserve"><value>New profile</value></data>
+
+  <data name="SettingsRetention" xml:space="preserve"><value>Retention</value></data>
+  <data name="SettingsMaxEntries" xml:space="preserve"><value>Maximum entries:</value></data>
+  <data name="SettingsMaxAgeDays" xml:space="preserve"><value>Days to keep:</value></data>
+  <data name="SettingsRetentionHint" xml:space="preserve"><value>Whichever comes first applies. 0 disables that limit.</value></data>
+  <data name="SettingsSaveAudio" xml:space="preserve"><value>Keep the WAV of every dictation in %LOCALAPPDATA%\VoiceFlow\audio</value></data>
+  <data name="SettingsConfirmClearHistory" xml:space="preserve"><value>Delete the whole dictation history?</value></data>
+</root>

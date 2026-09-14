@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="TestData/**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\VoiceFlow.Audio\VoiceFlow.Audio.csproj" />
+    <ProjectReference Include="..\VoiceFlow.Core\VoiceFlow.Core.csproj" />
+    <ProjectReference Include="..\VoiceFlow.Interop\VoiceFlow.Interop.csproj" />
+    <ProjectReference Include="..\VoiceFlow.Llm\VoiceFlow.Llm.csproj" />
+    <ProjectReference Include="..\VoiceFlow.Storage\VoiceFlow.Storage.csproj" />
+    <ProjectReference Include="..\VoiceFlow.Stt\VoiceFlow.Stt.csproj" />
+  </ItemGroup>
+
+</Project>

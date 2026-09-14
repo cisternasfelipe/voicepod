@@ -1,0 +1,91 @@
+<Window x:Class="VoiceFlow.App.Views.ModelPickerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:VoiceFlow.App.ViewModels"
+        xmlns:res="clr-namespace:VoiceFlow.App.Resources"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=vm:ModelPickerViewModel}"
+        Title="{x:Static res:Strings.ModelPickerTitle}"
+        Height="560"
+        Width="640"
+        MinHeight="420"
+        MinWidth="520"
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource BackgroundBrush}">
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <TextBox Grid.Column="0"
+                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged, Delay=150}"
+                     ToolTip="{x:Static res:Strings.ModelPickerSearchHint}" />
+
+            <CheckBox Grid.Column="1"
+                      Margin="12,0,0,0"
+                      VerticalAlignment="Center"
+                      Content="{x:Static res:Strings.ModelPickerOnlyFree}"
+                      IsChecked="{Binding OnlyFree}" />
+        </Grid>
+
+        <ListBox Grid.Row="1"
+                 ItemsSource="{Binding Models}"
+                 SelectedItem="{Binding SelectedModel}"
+                 Background="{StaticResource SurfaceBrush}"
+                 BorderBrush="{StaticResource BorderBrush}"
+                 BorderThickness="1"
+                 HorizontalContentAlignment="Stretch"
+                 VirtualizingPanel.IsVirtualizing="True"
+                 VirtualizingPanel.VirtualizationMode="Recycling"
+                 MouseDoubleClick="OnListDoubleClick">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="4,6">
+                        <TextBlock Text="{Binding DisplayName}" Style="{StaticResource BodyText}" />
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Id}" Style="{StaticResource MutedText}" />
+                            <TextBlock Text="  ·  "
+                                       Style="{StaticResource MutedText}"
+                                       Visibility="{Binding Summary, Converter={StaticResource NullToCollapsedConverter}}" />
+                            <TextBlock Text="{Binding Summary}" Style="{StaticResource MutedText}" />
+                        </StackPanel>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <StackPanel Grid.Row="2" Margin="0,10,0,0">
+            <TextBlock Text="{Binding StatusText}" Style="{StaticResource MutedText}" />
+            <Border Background="#33E05A5A"
+                    BorderBrush="{StaticResource DangerBrush}"
+                    BorderThickness="1"
+                    CornerRadius="6"
+                    Padding="12,8"
+                    Margin="0,8,0,0"
+                    Visibility="{Binding ErrorText, Converter={StaticResource NullToCollapsedConverter}}">
+                <TextBlock Text="{Binding ErrorText}" Style="{StaticResource BodyText}" />
+            </Border>
+        </StackPanel>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+            <Button Content="{x:Static res:Strings.Refresh}" Command="{Binding LoadCommand}" />
+            <Button Content="{x:Static res:Strings.Close}" Margin="8,0,0,0" Click="OnCloseClick" />
+            <Button Content="{x:Static res:Strings.ModelPickerUse}"
+                    Style="{StaticResource AccentButton}"
+                    Margin="8,0,0,0"
+                    Command="{Binding ChooseCommand}" />
+        </StackPanel>
+    </Grid>
+</Window>

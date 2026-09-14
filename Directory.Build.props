@@ -1,0 +1,22 @@
+<Project>
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Platforms>x64</Platforms>
+    <PlatformTarget>x64</PlatformTarget>
+    <!-- Keeps solution and per-project builds writing to the same bin/obj folders. -->
+    <AppendPlatformToOutputPath>false</AppendPlatformToOutputPath>
+    <!-- Allows running the app on a newer shared runtime when the .NET 8 one is absent. -->
+    <RollForward>LatestMajor</RollForward>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <NeutralLanguage>es</NeutralLanguage>
+    <Company>VoiceFlow</Company>
+    <Product>VoiceFlow</Product>
+    <Version>0.1.0</Version>
+  </PropertyGroup>
+
+</Project>
