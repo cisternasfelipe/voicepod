@@ -1,6 +1,10 @@
-# Diseño del Sistema y Experiencia de Usuario (UI/UX) - VoiceFlow
+# Diseño del Sistema y Experiencia de Usuario (UI/UX) - VoicePod
 
-Este documento describe la filosofía visual, el sistema de diseño (*design system*), las especificaciones de pantalla y las pautas de experiencia de usuario para la interfaz moderna de **VoiceFlow** (React + WebView2).
+<p align="center">
+  <img src="../source/voicepod-logo.jpg" alt="VoicePod Logo" width="140" style="border-radius: 20px;" />
+</p>
+
+Este documento describe la filosofía visual, la identidad de marca, el sistema de diseño (*design system*), las especificaciones de pantalla y las pautas de experiencia de usuario para la interfaz moderna de **VoicePod** (React + WebView2).
 
 ---
 

@@ -1,6 +1,16 @@
-# VoicePod
+<p align="center">
+  <img src="source/voicepod-logo.jpg" alt="VoicePod Logo" width="160" style="border-radius: 24px;" />
+</p>
 
-Dictado por voz inteligente para Windows 10/11 con **transcripción local offline** (NVIDIA Parakeet TDT 0.6B v3
+<h1 align="center">VoicePod</h1>
+
+<p align="center">
+  <strong>Dictado por voz inteligente para Windows 10/11 con transcripción local offline y refinamiento con IA</strong>
+</p>
+
+---
+
+Dictado por voz con **transcripción local offline** (NVIDIA Parakeet TDT 0.6B v3
 INT8 sobre sherpa-onnx) y **refinamiento opcional con LLMs** (OpenRouter / OpenAI) con control de temperatura,
 tope de longitud y razonamiento (Thinking / CoT). Pulsas un atajo global (ej. `Ctrl + Alt`), hablas, y el texto final
 se pega automáticamente en la ventana que tenías delante.
