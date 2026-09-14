@@ -26,12 +26,12 @@
     </WindowChrome.WindowChrome>
 
     <Window.Resources>
-        <!-- Modern Sidebar TabItem Style -->
+        <!-- Modern Liquid Glass Sidebar TabItem Style -->
         <Style x:Key="SidebarTabItemStyle" TargetType="TabItem">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="Foreground" Value="{StaticResource MutedTextBrush}" />
             <Setter Property="Margin" Value="0,2" />
-            <Setter Property="Padding" Value="14,10" />
+            <Setter Property="Padding" Value="14,9" />
             <Setter Property="Cursor" Value="Hand" />
             <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             <EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnTabItemPreviewMouseLeftButtonDown" />
@@ -41,20 +41,28 @@
                         <Border x:Name="TabBorder"
                                 Background="{TemplateBinding Background}"
                                 CornerRadius="10"
-                                BorderThickness="2.3"
+                                BorderThickness="1.5"
                                 BorderBrush="Transparent"
-                                Margin="4,2"
+                                Margin="2,1"
                                 Padding="{TemplateBinding Padding}">
                             <ContentPresenter ContentSource="Header" VerticalAlignment="Center" />
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="TabBorder" Property="Background" Value="{StaticResource SurfaceAltBrush}" />
+                                <Setter TargetName="TabBorder" Property="Background" Value="#25FFFFFF" />
+                                <Setter TargetName="TabBorder" Property="BorderBrush" Value="#408EAEFF" />
                                 <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="TabBorder" Property="Background" Value="#FF272E3D" />
-                                <Setter TargetName="TabBorder" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                <Setter TargetName="TabBorder" Property="Background">
+                                    <Setter.Value>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#FF3B82F6" Offset="0.0" />
+                                            <GradientStop Color="#FF2563EB" Offset="1.0" />
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="TabBorder" Property="BorderBrush" Value="#8093C5FD" />
                                 <Setter Property="Foreground" Value="White" />
                                 <Setter Property="FontWeight" Value="SemiBold" />
                             </Trigger>
@@ -75,116 +83,150 @@
             SnapsToDevicePixels="True"
             UseLayoutRounding="True">
         <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="40" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
+            <!-- Background Image Layer (Ready for user custom background photo) -->
+            <Image x:Name="WindowBackgroundImage"
+                   Stretch="UniformToFill"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   Opacity="0.85"
+                   Visibility="Collapsed" />
 
-            <!-- Custom Integrated Title Bar -->
-            <Grid Grid.Row="0" Background="{StaticResource BackgroundBrush}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-                <!-- App Icon & Window Title -->
-                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="14,0,0,0">
-                    <Image Source="pack://application:,,,/VoiceFlow;component/Resources/voicepod-logo.png"
-                           Width="18"
-                           Height="18"
-                           Margin="0,0,8,0"
-                           RenderOptions.BitmapScalingMode="HighQuality" />
-                    <TextBlock Text="VoicePod"
-                               FontWeight="Bold"
-                               FontSize="13"
-                               Foreground="{StaticResource TextBrush}"
-                               VerticalAlignment="Center" />
-                    <Border Background="{StaticResource SurfaceAltBrush}"
-                            BorderBrush="{StaticResource LineaBrush}"
-                            BorderThickness="1.5"
-                            CornerRadius="6"
-                            Padding="6,2"
-                            Margin="8,0,0,0"
-                            VerticalAlignment="Center">
-                        <TextBlock Text="Ajustes"
-                                   FontSize="10"
-                                   FontWeight="SemiBold"
-                                   Foreground="{StaticResource AccentBrush}" />
-                    </Border>
-                </StackPanel>
+                <!-- Custom Integrated Title Bar (Unified seamless backdrop) -->
+                <Grid Grid.Row="0" Background="Transparent">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
 
-                <!-- Draggable center area -->
-                <Grid Grid.Column="1" Background="Transparent" />
+                    <!-- App Icon & Window Title -->
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="14,0,0,0">
+                        <Image Source="pack://application:,,,/VoiceFlow;component/Resources/voicepod-logo.png"
+                               Width="18"
+                               Height="18"
+                               Margin="0,0,8,0"
+                               RenderOptions.BitmapScalingMode="HighQuality" />
+                        <TextBlock Text="VoicePod"
+                                   FontWeight="Bold"
+                                   FontSize="13"
+                                   Foreground="{StaticResource TextBrush}"
+                                   VerticalAlignment="Center" />
+                        <Border Background="{StaticResource SurfaceAltBrush}"
+                                BorderBrush="{StaticResource LineaBrush}"
+                                BorderThickness="1.5"
+                                CornerRadius="6"
+                                Padding="6,2"
+                                Margin="8,0,0,0"
+                                VerticalAlignment="Center">
+                            <TextBlock Text="Ajustes"
+                                       FontSize="10"
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource AccentBrush}" />
+                        </Border>
+                    </StackPanel>
 
-                <!-- Window Control Buttons -->
-                <StackPanel Grid.Column="2"
-                            Orientation="Horizontal"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                            Margin="0,0,6,0"
-                            WindowChrome.IsHitTestVisibleInChrome="True">
-                    <Button Style="{StaticResource WindowControlButton}"
-                            Click="OnMinimizeClick"
-                            ToolTip="Minimizar"
-                            WindowChrome.IsHitTestVisibleInChrome="True">
-                        <iconPacks:PackIconLucide Kind="Minus" Width="11" Height="11" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Button>
-                    <Button Style="{StaticResource WindowCloseButton}"
-                            Click="OnCloseClick"
-                            ToolTip="{x:Static res:Strings.Close}"
-                            WindowChrome.IsHitTestVisibleInChrome="True">
-                        <iconPacks:PackIconLucide Kind="X" Width="11" Height="11" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Button>
-                </StackPanel>
-            </Grid>
+                    <!-- Draggable center area -->
+                    <Grid Grid.Column="1" Background="Transparent" />
 
-            <!-- Main Content Area: Sidebar Navigation + Settings Pages -->
-            <Grid Grid.Row="1">
-                <TabControl TabStripPlacement="Left"
-                            Background="{StaticResource BackgroundBrush}"
-                            BorderThickness="0"
-                            Padding="0">
-                    <TabControl.Template>
-                        <ControlTemplate TargetType="TabControl">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="220" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
+                    <!-- Window Control Buttons -->
+                    <StackPanel Grid.Column="2"
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Margin="0,0,6,0"
+                                WindowChrome.IsHitTestVisibleInChrome="True">
+                        <Button Style="{StaticResource WindowControlButton}"
+                                Click="OnMinimizeClick"
+                                ToolTip="Minimizar"
+                                WindowChrome.IsHitTestVisibleInChrome="True">
+                            <iconPacks:PackIconLucide Kind="Minus" Width="11" Height="11" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Button>
+                        <Button Style="{StaticResource WindowCloseButton}"
+                                Click="OnCloseClick"
+                                ToolTip="{x:Static res:Strings.Close}"
+                                WindowChrome.IsHitTestVisibleInChrome="True">
+                            <iconPacks:PackIconLucide Kind="X" Width="11" Height="11" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Button>
+                    </StackPanel>
+                </Grid>
 
-                                <!-- Left Sidebar -->
-                                <Border Grid.Column="0"
-                                        Background="{StaticResource SurfaceBrush}"
-                                        BorderThickness="0,0,2.3,0"
-                                        BorderBrush="{StaticResource LineaBrush}">
-                                    <Grid Margin="10,14">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="*" />
-                                        </Grid.RowDefinitions>
+                <!-- Main Content Area: Sidebar Navigation + Settings Pages -->
+                <Grid Grid.Row="1">
+                    <TabControl TabStripPlacement="Left"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Padding="0">
+                        <TabControl.Template>
+                            <ControlTemplate TargetType="TabControl">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="236" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
 
-                                        <TextBlock Grid.Row="0"
-                                                   Text="CONFIGURACIÓN"
-                                                   FontSize="11"
-                                                   FontWeight="Bold"
-                                                   Foreground="{StaticResource MutedTextBrush}"
-                                                   Margin="10,0,0,10" />
+                                    <!-- Liquid Glass Floating Navigation Card -->
+                                    <Border Grid.Column="0"
+                                            Margin="14,6,8,12"
+                                            CornerRadius="16"
+                                            BorderThickness="1.5">
+                                        <Border.Effect>
+                                            <DropShadowEffect BlurRadius="22"
+                                                              Color="#000000"
+                                                              Opacity="0.50"
+                                                              Direction="270"
+                                                              ShadowDepth="4" />
+                                        </Border.Effect>
+                                        <Border.Background>
+                                            <!-- Liquid glass translucent multi-stop gradient -->
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                <GradientStop Color="#3E2E3E5B" Offset="0.0" />
+                                                <GradientStop Color="#241B263B" Offset="0.5" />
+                                                <GradientStop Color="#3024334C" Offset="1.0" />
+                                            </LinearGradientBrush>
+                                        </Border.Background>
+                                        <Border.BorderBrush>
+                                            <!-- Liquid glass specular edge refraction -->
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="0.2,1">
+                                                <GradientStop Color="#70A7CBFF" Offset="0.0" />
+                                                <GradientStop Color="#2A648CCC" Offset="0.45" />
+                                                <GradientStop Color="#22FFFFFF" Offset="1.0" />
+                                            </LinearGradientBrush>
+                                        </Border.BorderBrush>
 
-                                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                                            <StackPanel IsItemsHost="True" />
-                                        </ScrollViewer>
-                                    </Grid>
-                                </Border>
+                                        <Grid Margin="10,14,10,12">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="*" />
+                                            </Grid.RowDefinitions>
 
-                                <!-- Right Content Area -->
-                                <Border Grid.Column="1" Background="{StaticResource BackgroundBrush}" Padding="24,18">
-                                    <ContentPresenter x:Name="PART_SelectedContentHost" ContentSource="SelectedContent" />
-                                </Border>
-                            </Grid>
-                        </ControlTemplate>
-                    </TabControl.Template>
+                                            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="8,2,0,12" VerticalAlignment="Center">
+                                                <Border Width="6" Height="6" CornerRadius="3" Background="{StaticResource AccentBrush}" Margin="0,0,8,0" />
+                                                <TextBlock Text="CONFIGURACIÓN"
+                                                           FontSize="11"
+                                                           FontWeight="Bold"
+                                                           Foreground="{StaticResource MutedTextBrush}" />
+                                            </StackPanel>
+
+                                            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                                <StackPanel IsItemsHost="True" />
+                                            </ScrollViewer>
+                                        </Grid>
+                                    </Border>
+
+                                    <!-- Right Content Area -->
+                                    <Border Grid.Column="1" Background="Transparent" Padding="18,10,24,14">
+                                        <ContentPresenter x:Name="PART_SelectedContentHost" ContentSource="SelectedContent" />
+                                    </Border>
+                                </Grid>
+                            </ControlTemplate>
+                        </TabControl.Template>
 
                     <!-- TAB 1: GENERAL -->
                     <TabItem Style="{StaticResource SidebarTabItemStyle}">
@@ -889,12 +931,12 @@
                 </TabControl>
             </Grid>
 
-            <!-- Bottom Action Footer -->
+            <!-- Bottom Action Footer (Seamless transparent integration with unified background) -->
             <Border Grid.Row="2"
-                    Background="{StaticResource SurfaceBrush}"
-                    BorderThickness="0,2.3,0,0"
+                    Background="Transparent"
+                    BorderThickness="0,1.5,0,0"
                     BorderBrush="{StaticResource LineaBrush}"
-                    Padding="20,12">
+                    Padding="24,12">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -925,5 +967,6 @@
                 </Grid>
             </Border>
         </Grid>
-    </Border>
+    </Grid>
+</Border>
 </Window>
